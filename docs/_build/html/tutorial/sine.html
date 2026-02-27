@@ -1,0 +1,253 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Sine-Fit &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Documentation" href="../api_doc/main.html" />
+    <link rel="prev" title="PRBS" href="prbs.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="main.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main.html#obcd">ObCD</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="main.html#frm">FRM</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="prbs.html">PRBS</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Sine-Fit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_doc/main.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/main.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="main.html">Tutorial</a> &raquo;</li>
+        
+      <li>Sine-Fit</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorial/sine.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sine-fit">
+<h1>Sine-Fit<a class="headerlink" href="#sine-fit" title="Permalink to this headline">¶</a></h1>
+<p>For converters which cannot support the large rate of change associated with the PRBS signal, the sine-fit method may
+be more approprioate for measuring a system frequency response. The sine-fit algorithm is based on injecting sinusoids of varying frequencies
+at a desired reference to obtain the magnitude and phase of a system at those specified frequencies.
+In general, the measurement time will increase as the number of frequency points is increased;
+the measurement time will be significantly longer if more <a class="reference internal" href="../api_doc/ui_params_frm.html#num-freq"><span class="std std-ref">frequency points</span></a> are chosen.
+Note that the frequency vector is logarithmically spaced. The highest frequency point in the array is
+selected based on the sampling time of the loop (i.e., <span class="math notranslate nohighlight">\(f_{max} = 0.1T_s^{-1}\)</span>, where <span class="math notranslate nohighlight">\(T_s\)</span> is
+the sampling time). In voltage mode (i.e., during open-loop measurements),
+<span class="math notranslate nohighlight">\(T_s =\)</span> <a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyFGC.htm#FGC.ITER_PERIOD">FGC.ITER_PERIOD</a>,
+and in current/field modes (i.e., during closed-loop measurements),
+<span class="math notranslate nohighlight">\(T_s =\)</span>
+(<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyFGC.htm#FGC.ITER_PERIOD">FGC.ITER_PERIOD</a>) <span class="math notranslate nohighlight">\(\times\)</span>
+(<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyREG.htm#REG.I.PERIOD_ITERS">REG.I.PERIOD_ITERS</a>) or
+(<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyFGC.htm#FGC.ITER_PERIOD">FGC.ITER_PERIOD</a>) <span class="math notranslate nohighlight">\(\times\)</span>
+(<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyREG.htm#REG.B.PERIOD_ITERS">REG.B.PERIOD_ITERS</a>).
+This means that each sinusoid injected in the system will contain at least 10 sampling points per period (where
+the highest frequency sinusoid will contain exactly 10 sampling points). Thus for a signal sampled at
+<span class="math notranslate nohighlight">\(T_s = 100 \: \mu s\)</span>, <span class="math notranslate nohighlight">\(f_{max} = 0.1(10000) = 1000\)</span> Hz. The user can set the value of <span class="math notranslate nohighlight">\(f_{min}\)</span>
+and <span class="math notranslate nohighlight">\(f_{max}\)</span>; however, the constraint <span class="math notranslate nohighlight">\(f_{max} \leq 0.1T_s^{-1}\)</span> must be satisfied.
+The user can consult <a class="reference internal" href="#sine-exp"><span class="std std-numref">Fig. 6</span></a> for setting the characteristics of the sine-fit measurement signal.</p>
+<p>Once the experiments have been completed, a Bode plot of the measured system will automatically appear in Powerspy.
+The Bode plot will be saved in Fortlogs, and can be accessed at a later time (for general analysis or controller design
+purposes). See the <a class="reference internal" href="../api_doc/api_ref.html#api-reference"><span class="std std-ref">API Reference</span></a> to learn how to execute the PyFresco commands to initiate the data-driven controller
+design algorithms (for either voltage, current, and/or field control).</p>
+<div class="figure align-default" id="id1">
+<span id="sine-exp"></span><img alt="Characteristics of sine-fit" src="../_images/sine_fit_character.png" />
+<p class="caption"><span class="caption-number">Fig. 6 </span><span class="caption-text">Characteristics of the sine-fit measurement process.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../api_doc/main.html" class="btn btn-neutral float-right" title="API Documentation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="prbs.html" class="btn btn-neutral float-left" title="PRBS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

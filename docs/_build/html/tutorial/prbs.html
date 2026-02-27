@@ -1,0 +1,273 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PRBS &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sine-Fit" href="sine.html" />
+    <link rel="prev" title="Voltage Control" href="voltage.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="main.html">Tutorial</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main.html#obcd">ObCD</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="main.html#frm">FRM</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">PRBS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sine.html">Sine-Fit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_doc/main.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/main.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="main.html">Tutorial</a> &raquo;</li>
+        
+      <li>PRBS</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorial/prbs.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="prbs">
+<h1>PRBS<a class="headerlink" href="#prbs" title="Permalink to this headline">¶</a></h1>
+<p>The PRBS method injects a signal with white noise characteristics; the
+spectrum of a PRBS signal is flat and excites all frequencies when the
+signals’ clock period <span class="math notranslate nohighlight">\(T_{ck}\)</span> is equal to the sampling period.
+However, for a clock period larger than the sampling period, the
+spectrum has an envelop of the following form:</p>
+<div class="math notranslate nohighlight">
+\[\Phi(\omega) = T_{ck} \cdot \text{sinc}^2 (\omega T_{ck}/2)\]</div>
+<p>where <span class="math notranslate nohighlight">\(\text{sinc}(y) = \sin(y)/y\)</span>. Note that this spectrum has
+dips around <span class="math notranslate nohighlight">\(2\pi/T_{ck}, 4\pi/T_{ck},6\pi/T_{ck},\ldots\)</span>, which
+signifies that the frequency response of a system (when excited with a
+PRBS clock period greater than the sampling period) will be
+significantly impacted by the signal-to-noise ratio at these frequency
+points. It is thus recommended that the clock period is always selected
+to be equal to the sampling period in order to obtain the most accurate
+response.</p>
+<p>The PRBS method is much faster than the sine-fit method since only one
+experiment needs to be performed (as opposed to performing multiple
+experiments, where each experiment excites a single frequency). However,
+there are three main shortcomings in using the PRBS method: <em>(i)</em> the
+limited frequency response resolution at lower frequencies, and <em>(ii)</em>,
+a distortion in the frequency response caused by noise and <em>(iii)</em> the
+fact that the PRBS signal has a very large rate of change (which may not
+be realizable in certain converters). The resolution issue can be
+resolved by increasing the number of bits (i.e., the data length of a
+PRBS period); however, this requires more data to be stored, and the FGC
+is limited in the amount of data that can be saved in a log file before
+the signal begins to be down-sampled (the data limit for any given
+signal in a log file is <span class="math notranslate nohighlight">\(2890000/(4N_s)\)</span>, where <span class="math notranslate nohighlight">\(N_s\)</span> is the
+number of signals in a FGC log file).</p>
+<p><a class="reference internal" href="#prbs-sig"><span class="std std-numref">Fig. 4</span></a> shows an example of a PRBS signal with a clock period
+equal to its sampling period of <span class="math notranslate nohighlight">\(100\: \mu s\)</span>. A PRBS signal will over-emphasize
+the high frequency band at the cost of the low and middle frequency band; as
+already mentioned above, because of the aggressive nature of this signal,
+caution must be exercised when selecting the desired amplitude.</p>
+<div class="figure align-default" id="id1">
+<span id="prbs-sig"></span><img alt="Example PRBS." src="../_images/PRBS.png" />
+<p class="caption"><span class="caption-number">Fig. 4 </span><span class="caption-text">Example of a PRBS excitation signal sampled at 10kHz.</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>The user can consult <a class="reference internal" href="#prbs-exp"><span class="std std-numref">Fig. 5</span></a> for setting the characteristics
+of the PRBS test signal. With respect to the parameter <a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyREF.htm#REF.PRBS.PERIOD_ITERS">REF.PRBS.PERIOD_ITERS</a>.
+The frequency response of a system will be linearly spaced in the interval
+<span class="math notranslate nohighlight">\([f_{min},f_{max}]\)</span>, where <span class="math notranslate nohighlight">\(f_{min} = [T_s(2^{\texttt{K Order}}-1)]^{-1}\)</span> and
+<span class="math notranslate nohighlight">\(f_{max} = (2 \cdot\)</span> <a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyREF.htm#REF.PRBS.PERIOD_ITERS">REF.PRBS.PERIOD_ITERS</a> <span class="math notranslate nohighlight">\(\cdot T_s)^{-1}\)</span>
+(and <span class="math notranslate nohighlight">\(T_s\)</span> [s] is the sampling time).</p>
+<div class="figure align-default" id="id2">
+<span id="prbs-exp"></span><img alt="Characteristics of prbs-fit" src="../_images/PRBS_character.png" />
+<p class="caption"><span class="caption-number">Fig. 5 </span><span class="caption-text">Characteristics of the prbs-fit measurement process.</span><a class="headerlink" href="#id2" title="Permalink to this image">¶</a></p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sine.html" class="btn btn-neutral float-right" title="Sine-Fit" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="voltage.html" class="btn btn-neutral float-left" title="Voltage Control" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

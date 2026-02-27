@@ -1,0 +1,289 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Sensitivity function analysis &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PRBS Example" href="prbs.html" />
+    <link rel="prev" title="Controller design for V-Loop" href="V_loop.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/main.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_doc/main.html">API Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="main.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="main.html#obcd-examples">ObCD Examples</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="RST_IB.html">RST and ILC design for I/B-Loop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="V_loop.html">Controller design for V-Loop</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Sensitivity function analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="main.html#frm-examples">FRM Examples</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="main.html">Examples</a> &raquo;</li>
+        
+      <li>Sensitivity function analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/examples/sens.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sensitivity-function-analysis">
+<h1>Sensitivity function analysis<a class="headerlink" href="#sensitivity-function-analysis" title="Permalink to this headline">¶</a></h1>
+<p>As described in the RST and voltage loop synthesis (see <a class="reference internal" href="RST_IB.html#rst-and-ilc-design-for-i-b-loop"><span class="std std-ref">RST and ILC design for I/B-Loop</span></a>
+and <a class="reference internal" href="V_loop.html#controller-design-for-v-loop"><span class="std std-ref">Controller design for V-Loop</span></a>), one of the output arguments from the optimization
+algorithm is <code class="docutils literal notranslate"><span class="pre">df_sens</span></code>; for current and field control, this variable is a list where each index of the list contains
+multiple sensitivity functions (in a dataframe format). The gain [dB] and phase [deg] are given for each
+sensitivity function. The example below shows the sensitivity function columns names for current and field
+control.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df_sens</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">MultiIndex([(        &#39;Sensitivity_r_y&#39;,  &#39;gain&#39;),</span>
+<span class="go">            (        &#39;Sensitivity_r_y&#39;, &#39;phase&#39;),</span>
+<span class="go">            (       &#39;Sensitivity_dy_y&#39;,  &#39;gain&#39;),</span>
+<span class="go">            (       &#39;Sensitivity_dy_y&#39;, &#39;phase&#39;),</span>
+<span class="go">            (       &#39;Sensitivity_dv_y&#39;,  &#39;gain&#39;),</span>
+<span class="go">            (       &#39;Sensitivity_dv_y&#39;, &#39;phase&#39;),</span>
+<span class="go">            (        &#39;Sensitivity_n_y&#39;,  &#39;gain&#39;),</span>
+<span class="go">            (        &#39;Sensitivity_n_y&#39;, &#39;phase&#39;),</span>
+<span class="go">            (        &#39;Sensitivity_r_u&#39;,  &#39;gain&#39;),</span>
+<span class="go">            (        &#39;Sensitivity_r_u&#39;, &#39;phase&#39;),</span>
+<span class="go">            (&#39;Sensitivity_r_y_DESIRED&#39;,  &#39;gain&#39;),</span>
+<span class="go">            (&#39;Sensitivity_r_y_DESIRED&#39;, &#39;phase&#39;)],</span>
+<span class="go">           )</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>These sensitivity functions correspond to the functions used in <a class="reference internal" href="../tutorial/current_field.html#current-field-control"><span class="std std-ref">Current/Field Control</span></a>.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+\mathcal{S}_{ry} &amp; \Rightarrow  \texttt{Sensitivity_r_y} \\
+\mathcal{S}_{ry}^d &amp; \Rightarrow  \texttt{Sensitivity_r_y_DESIRED} \\
+\mathcal{S}_{rv_r} &amp; \Rightarrow  \texttt{Sensitivity_r_u} \\
+\mathcal{S}_{d_yy} &amp; \Rightarrow  \texttt{Sensitivity_dy_y} \\
+\mathcal{S}_{d_vy} &amp; \Rightarrow  \texttt{Sensitivity_dv_y} \\
+\mathcal{S}_{n_yy} &amp; \Rightarrow  \texttt{Sensitivity_n_y}
+\end{aligned}\end{split}\]</div>
+<p>For voltage control, the output variable <code class="docutils literal notranslate"><span class="pre">df_sens</span></code> is simply a dataframe.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df_sens</span><span class="o">.</span><span class="n">columns</span>
+<span class="go">    MultiIndex([(        &#39;Sensitivity_r_y_damping&#39;,  &#39;gain&#39;),</span>
+<span class="go">                (        &#39;Sensitivity_r_y_damping&#39;, &#39;phase&#39;),</span>
+<span class="go">                (        &#39;Sensitivity_r_y_voltage&#39;,  &#39;gain&#39;),</span>
+<span class="go">                (        &#39;Sensitivity_r_y_voltage&#39;, &#39;phase&#39;),</span>
+<span class="go">                (          &#39;Sensitivity_dy_y_damp&#39;,  &#39;gain&#39;),</span>
+<span class="go">                (          &#39;Sensitivity_dy_y_damp&#39;, &#39;phase&#39;),</span>
+<span class="go">                (          &#39;Sensitivity_dy_y_volt&#39;,  &#39;gain&#39;),</span>
+<span class="go">                (          &#39;Sensitivity_dy_y_volt&#39;, &#39;phase&#39;),</span>
+<span class="go">                (&#39;Sensitivity_r_y_damping_DESIRED&#39;,  &#39;gain&#39;),</span>
+<span class="go">                (&#39;Sensitivity_r_y_damping_DESIRED&#39;, &#39;phase&#39;),</span>
+<span class="go">                (&#39;Sensitivity_r_y_voltage_DESIRED&#39;,  &#39;gain&#39;),</span>
+<span class="go">                (&#39;Sensitivity_r_y_voltage_DESIRED&#39;, &#39;phase&#39;)],</span>
+<span class="go">               )</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>These sensitivity functions correspond to the functions used in <a class="reference internal" href="../tutorial/voltage.html#voltage-control"><span class="std std-ref">Voltage Control</span></a>.</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+\mathcal{S}_{v_dv_0} &amp; \Rightarrow  \texttt{Sensitivity_r_y_damping} \\
+\mathcal{S}_{v_dv_0}^d &amp; \Rightarrow  \texttt{Sensitivity_r_y_damping_DESIRED} \\
+\mathcal{S}_{v_rv_0} &amp; \Rightarrow  \texttt{Sensitivity_r_y_voltage} \\
+\mathcal{S}_{v_rv_0}^d &amp; \Rightarrow  \texttt{Sensitivity_r_y_voltage_DESIRED} \\
+\mathcal{S}_{d_{v_0}v_0} \text{(with voltage loop open)} &amp; \Rightarrow  \texttt{Sensitivity_dy_y_damp} \\
+\mathcal{S}_{d_{v_0}v_0} \text{(with voltage loop closed)} &amp; \Rightarrow  \texttt{Sensitivity_dy_y_volt}
+\end{aligned}\end{split}\]</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="prbs.html" class="btn btn-neutral float-right" title="PRBS Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="V_loop.html" class="btn btn-neutral float-left" title="Controller design for V-Loop" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,249 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Python Frequency RESponse-based Controller Optimization (PyFresco) &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Tutorial" href="tutorial/main.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="#" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/main.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_doc/main.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/main.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Python Frequency RESponse-based Controller Optimization (PyFresco)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="python-frequency-response-based-controller-optimization-pyfresco">
+<h1>Python Frequency RESponse-based Controller Optimization (PyFresco)<a class="headerlink" href="#python-frequency-response-based-controller-optimization-pyfresco" title="Permalink to this headline">¶</a></h1>
+<p>Welcome to the PyFresco documentation page! This document will outline the basic functions and methods used in PyFresco.
+This toolbox is used to design controllers for the voltage, current and field loops in the CERN power converter
+control system. The toolbox also offers several methods for measuring the frequency response function (FRF)
+of the open-loop and closed-loop responses. The FRF’s for the open-loop responses can be used to synthesize
+controllers in cases where the dynamics of the converter/magnet are unknown or where high robustness/performance
+is needed.</p>
+<p>A tutorial on the functions used by PyFresco can be accessed by clicking on the Tutorial link on the left pane.
+The API Documentation displays the main objects and methods to call in order to execute the controller synthesis
+commands or frequency response measurements. There is also an Examples section to help the user understand the
+main functionality of PyFresco.</p>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<p>PyFresco can be easily installed with PyPI by calling</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">pip install pyfresco</span>
+</pre></div>
+</div>
+<p>PyFresco has the following dependencies:</p>
+<ul class="simple">
+<li><p>Python 3.6 or 3.7</p></li>
+<li><p>PyFGC <span class="math notranslate nohighlight">\(\geq\)</span> 1.4.1</p></li>
+<li><p>NumPy <span class="math notranslate nohighlight">\(\geq\)</span> 1.18.5</p></li>
+<li><p>CVXPY <span class="math notranslate nohighlight">\(\geq\)</span> 1.1.1</p></li>
+<li><p>CVXOPT <span class="math notranslate nohighlight">\(\geq\)</span> 1.2.5</p></li>
+<li><p>Control <span class="math notranslate nohighlight">\(\geq\)</span> 0.8.3</p></li>
+<li><p>Pandas <span class="math notranslate nohighlight">\(\geq\)</span> 1.0.5</p></li>
+<li><p>Tabulate <span class="math notranslate nohighlight">\(\geq\)</span> 0.8.7</p></li>
+<li><p>SciPy <span class="math notranslate nohighlight">\(\geq\)</span> 1.5.2</p></li>
+</ul>
+<p>Contents:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorial/main.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api_doc/main.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples/main.html">Examples</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="tutorial/main.html" class="btn btn-neutral float-right" title="Tutorial" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

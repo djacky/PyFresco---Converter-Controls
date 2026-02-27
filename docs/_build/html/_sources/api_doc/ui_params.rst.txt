@@ -1,0 +1,682 @@
+UI Parameters
+=============
+
+The regulation rate is used to determine some of the UI parameter limits; the regulation rate is defined as:
+
+.. math::
+   :label: Fs
+
+   F_s =(\text{FGC.ITER_PERIOD} \times \text{REG.I/B.PERIOD_ITERS[x]})^{-1}
+
+ObCD Keys
+----------
+
+.. _reg_mode:
+
+**Reg. Mode:** 
+
+    :keyword: 
+        :code:`reg_mode`
+
+        Desired control loop to regulate.
+
+        ``V``: Design controller for damping and voltage loop
+
+        ``I``: Design RST and ILC controllers for current loop
+
+        ``B``: Design RST and ILC controllers for field loop
+
+    :Type: 
+        ``str``
+        
+    :Default: 
+        Not applicable.
+        
+    :Recommended: 
+        Not applicable.
+        
+    :Feasible values: 
+        [``I``, ``B``, ``V``]
+
+Current/Field Keys
+~~~~~~~~~~~~~~~~~~
+
+.. _des_bw:
+
+**Bandwidth:** 
+
+    :keyword: 
+        :code:`des_bw`
+
+        Desired closed-loop bandwidth :math:`f_{ib}` [Hz].
+
+    :Type: 
+        ``float``
+        
+    :Default: 
+        :math:`F_s/15`
+        
+    :Recommended: 
+        :math:`F_s/25 \leq f_{ib} \leq F_s/8`
+        
+    :Feasible values: 
+        :math:`(0,F_s/2)`
+
+----
+
+.. _des_z:
+
+**Damping:**
+
+    :keyword: 
+        :code:`des_z`
+    
+        Desired closed-loop damping :math:`\zeta_{ib}` [-].
+
+    :Type: 
+        ``float``
+          
+    :Default: 
+        :math:`0.8`
+          
+    :Recommended: 
+        :math:`0.8`
+          
+    :Feasible values: 
+        :math:`(0,1)`
+
+----
+
+.. _des_mm:
+
+**Modulus Margin:**
+
+    :keyword: 
+        :code:`des_mm`
+    
+        Desired modulus margin :math:`\Delta M_{ib}` [-].
+
+    :Type: 
+        ``float``
+          
+    :Default: 
+        :math:`0.5`
+          
+    :Recommended*: 
+        :math:`0.5`
+
+        A higher value will increase the system robustness to uncertainties, but will degrade the tracking performance.
+        Conversly, a lower value will decrease the system robustness to uncertainties, but will enhance the tracking performance.
+          
+    :Feasible values: 
+        :math:`(0,1)`
+
+----
+
+.. _ref_delay:
+
+**Reference Delay:**
+
+    :keyword: 
+        :code:`ref_delay`
+    
+        Value of delay :math:`d_r` [s] to add on the desired second-order system.
+
+    :Type: 
+        ``float``
+          
+    :Default: 
+        :math:`0`
+          
+    :Recommended: 
+        In general, :math:`d_r=0` is sufficient for the desired performance. For high performance systems, set :math:`d_r` equal to the open-loop delay.
+          
+    :Feasible values: 
+        :math:`[0,\infty)`
+
+----
+
+.. _n_integrators:
+
+**Integrators:**
+
+    :keyword: 
+        :code:`n_integrators`
+    
+        Desired number of integrators :math:`n_I` in the :math:`S(z)` polynomial.
+
+    :Type: 
+        ``int``
+          
+    :Default: 
+        :math:`2`
+          
+    :Recommended: 
+        :math:`2`
+        
+        For systems with large open-loop delays, :math:`n_I=1` may be prefered.
+          
+    :Feasible values: 
+        :math:`(0,3]`
+
+----
+
+.. _opt_method:
+
+**Optimization Method:**
+          
+    :keyword: 
+        :code:`opt_method`
+    
+        Desired optimization method.
+
+    :Type: 
+        ``str``
+          
+    :Default: 
+        :math:`H_\infty`
+          
+    :Recommended: 
+        Depends on the type of desired performance. See :ref:`Current/Field Control` for more information
+          
+    :Feasible values: 
+        :math:`[H_\infty,H_2,H_1]`
+
+----
+
+.. _n_r:
+
+**Num. Coefficients (R):**
+
+    :keyword: 
+        :code:`n_r`
+    
+        Desired number of coefficients :math:`n_r` in the :math:`R(z)` polynomial.
+
+    :Type: 
+        ``int``
+          
+    :Default: 
+        :math:`6`
+          
+    :Recommended: 
+        :math:`6`
+        
+        A larger value can be used for high performance systems.
+          
+    :Feasible values: 
+        :math:`(3,16]`
+
+----
+
+.. _n_s:
+
+**Num. Coefficients (S):**
+
+    :keyword: 
+        :code:`n_s`
+    
+        Desired number of coefficients :math:`n_s` in the :math:`S(z)` polynomial.
+
+    :Type: 
+        ``int``
+          
+    :Default: 
+        :math:`6`
+          
+    :Recommended: 
+        :math:`6`
+        
+        A larger value can be used for high performance systems.
+          
+    :Feasible values: 
+        :math:`(3,16]`
+
+----
+
+.. _n_t:
+
+**Num. Coefficients (T):**
+
+    :keyword: 
+        :code:`n_t`
+    
+        Desired number of coefficients :math:`n_t` in the :math:`T(z)` polynomial.
+
+    :Type: 
+        ``int``
+          
+    :Default: :math:`6`
+          
+    :Recommended: 
+        :math:`6`
+        
+        A larger value can be used for high performance systems. If ``opt_method`` is set 
+        to :math:`H_1`, set this parameter greater than ``n_r`` and ``n_s``.
+          
+    :Feasible values: 
+        :math:`(3,16]`
+
+----
+
+.. _n_ilc:
+
+**L-Filter Order**
+
+    :keyword: 
+        :code:`n_ilc`
+    
+        Order :math:`n_{ilc}` of the L-filter used for the ILC algorithm.
+
+    :Type: 
+        ``int``
+          
+    :Default: 
+        :math:`5`
+          
+    :Recommended: 
+        Application dependent. In general, a value :math:`n_{ilc}>4` is sufficient.
+          
+    :Feasible values: 
+        :math:`(0,12]`
+
+----
+
+.. _n_q:
+
+**Q-Filter Order:**
+
+    :keyword: 
+        :code:`n_q`
+    
+        Order :math:`n_{q}` of the Q-filter (non-causal FIR) used for the ILC algorithm.
+
+    :Type: 
+        ``int``
+          
+    :Default: 
+        :math:`5`
+          
+    :Recommended: 
+        Application dependent. In general, a value :math:`n_{q}>4` is sufficient.
+          
+    :Feasible values: 
+        :math:`(0,12]`
+
+----
+
+.. _q_bw:
+
+**Q-Filter Bandwidth:**
+
+    :keyword: 
+        :code:`q_bw`
+    
+        Desired bandwidth :math:`f_q` [Hz] of the ILC Q-filter.
+
+    :Type: 
+        ``float``
+          
+    :Default: 
+        :math:`0`
+          
+    :Recommended: 
+        Application dependent. A value :math:`f_q>0` will enable the Q-filter optimization. A value of :math:`f_q = 0` will set the Q-filter equal to :math:`1`.
+          
+    :Feasible values: 
+        :math:`(0,F_s / 2)`
+
+----
+
+Voltage Keys
+~~~~~~~~~~~~
+
+.. _damp_bw:
+
+**Damping-loop Bandwidth:**
+
+    :keyword: 
+        :code:`damp_bw`
+    
+        Desired closed-loop bandwidth :math:`f_d` [Hz] for the damping loop.
+
+    :Type: 
+        ``float``
+          
+    :Default: 
+        :math:`50`
+          
+    :Recommended: 
+        Application dependent.
+          
+    :Feasible values: 
+        :math:`(0,\infty)`
+
+----
+
+.. _damp_z:
+
+**Damping-loop Damping:**
+
+    :keyword: 
+        :code:`damp_z`
+    
+        Desired closed-loop damping :math:`\zeta_d` [-] for the damping loop.
+
+    :Type: 
+        ``float``
+          
+    :Default: 
+        :math:`0.8`
+          
+    :Recommended: 
+        :math:`0.8`
+          
+    :Feasible values: 
+        :math:`(0,1)`
+
+----
+
+.. _volt_bw:
+
+**Voltage-loop Bandwidth:**
+
+    :keyword: 
+        :code:`volt_bw`
+    
+        Desired closed-loop bandwidth :math:`f_v` [Hz] for the voltage loop.
+
+    :Type: 
+        ``float``
+          
+    :Default: 
+        :math:`50`
+          
+    :Recommended: 
+        Application dependent.
+          
+    :Feasible values: 
+        :math:`(0,\infty)`
+
+----
+
+.. _volt_z:
+
+**Voltage-loop Damping:**
+
+    :keyword: 
+        :code:`volt_z`
+    
+        Desired closed-loop damping :math:`\zeta_v` [-] for the voltage loop.
+
+    :Type: 
+        ``float``
+          
+    :Default: 
+        :math:`0.8`
+          
+    :Recommended: 
+        :math:`0.8`
+          
+    :Feasible values: 
+        :math:`(0,1)`
+
+----
+
+.. _volt_mm:
+
+**Voltage Modulus Margin:**
+
+    :keyword: 
+        :code:`volt_mm`
+    
+        Desired modulus margin :math:`\Delta M_v` [-] for the voltage loop.
+
+    :Type: 
+        ``float``
+          
+    :Default: 
+        :math:`0.5`
+          
+    :Recommended: 
+        :math:`0.5`
+
+        A higher value will increase the system robustness to uncertainties, but will degrade the tracking performance.
+        Conversly, a lower value will decrease the system robustness to uncertainties, but will enhance the tracking performanc
+          
+    :Feasible values: 
+        :math:`(0,1)`
+
+----
+
+.. _ref_delay_v:
+
+**Reference Delay:**
+
+    :keyword: 
+        :code:`ref_delay`
+    
+        Value of delay :math:`d_r` [s] to add on the desired second-order system.
+
+    :Type: 
+        ``float``
+          
+    :Default: 
+        :math:`0`
+          
+    :Recommended: 
+        In general, :math:`d_r=0` is sufficient for the desired performance. For high performance systems, set :math:`d_r` equal to the open-loop delay.
+          
+    :Feasible values: 
+        :math:`[0,\infty)`
+
+----
+
+.. _opt_method_v:
+
+**Optimization Method:**
+          
+    :keyword: 
+        :code:`opt_method`
+    
+        Desired optimization method.
+
+    :Type: 
+        ``str``
+          
+    :Default: 
+        :math:`H_\infty`
+          
+    :Recommended: 
+        Depends on the type of desired performance. See :ref:`Voltage Control` for more information
+          
+    :Feasible values: 
+        :math:`[H_\infty,H_2]`
+
+----
+
+FRM Keys
+--------
+
+.. _reg_mode_ident:
+
+**Reg. Mode:** 
+
+    :keyword: 
+        :code:`reg_mode`
+
+        Desired mode to be in when performing the measurement experiments.
+
+        ``V``: Control system is in open-loop mode. (in the FGC, this is set with REG.MODE V)
+
+        ``I``: RST for the current-loop is enabled (in the FGC, this is set with REG.MODE I)
+
+        ``B``: RST for the field-loop is enabled (in the FGC, this is set with REG.MODE B)
+
+    :Type: 
+        ``str``
+        
+    :Default: 
+        Not applicable.
+        
+    :Recommended: 
+        If the purpose of the measurement is to synthesize an RST and ILC controller, use ``V``.
+        ``I`` or ``B`` are generally used for analysis purposes (i.e., confirming the closed-loop behavior).
+        
+    :Feasible values: 
+        [``I``, ``B``, ``V``]
+
+----
+
+Sine-Fit Keys
+~~~~~~~~~~~~~
+
+.. _ref_mode_sine:
+
+**Input:**
+          
+    :keyword: 
+        :code:`ref_mode`
+    
+        The input signal name of the measurement (i.e., signal name from FGC log).
+
+    :Type: 
+        ``str``
+          
+    :Default: 
+        ``V_REF``
+          
+    :Recommended: 
+        Not applicable.
+          
+    :Feasible values: 
+        [``V_REF``, ``F_REF_LIMITED``, ``V_MEAS``, ``I_REF_ADV``, ``B_REF_ADV``]
+
+----
+
+.. _meas_mode_sine:
+
+**Output:**
+          
+    :keyword: 
+        :code:`meas_mode`
+    
+        The output signal name of the measurement (i.e., signal name from FGC log).
+
+    :Type: 
+        ``str``
+          
+    :Default: 
+        ``I_MEAS``
+          
+    :Recommended: 
+        Not applicable.
+          
+    :Feasible values: 
+        [``V_MEAS``, ``I_MEAS``, ``B_MEAS``, ``V_MEAS_REG``, 
+        ``I_MEAS_REG``, ``B_MEAS_REG``, ``I_CAPA``]
+
+----
+
+PRBS Keys
+~~~~~~~~~
+
+.. _ref_mode_prbs:
+
+**Input:**
+          
+    :keyword: 
+        :code:`ref_mode`
+    
+        The input signal name of the measurement (i.e., signal name from FGC log).
+
+    :Type: 
+        ``str``
+          
+    :Default: 
+        ``V_REF``
+          
+    :Recommended: 
+        Not applicable.
+          
+    :Feasible values: 
+        [``V_REF``, ``F_REF_LIMITED``, ``V_MEAS``, ``I_REF_ADV``, ``B_REF_ADV``]
+
+----
+
+.. _meas_mode_prbs:
+
+**Output:**
+          
+    :keyword: 
+        :code:`meas_mode`
+    
+        The output signal name of the measurement (i.e., signal name from FGC log).
+
+    :Type: 
+        ``str``
+          
+    :Default: 
+        ``I_MEAS``
+          
+    :Recommended: 
+        Not applicable.
+          
+    :Feasible values: 
+        [``V_MEAS``, ``I_MEAS``, ``B_MEAS``, ``V_MEAS_REG``, 
+        ``I_MEAS_REG``, ``B_MEAS_REG``, ``I_CAPA``]
+
+----
+
+.. _period_iters:
+
+**Period Iters**
+          
+    :keyword: 
+        :code:`period_iters`
+    
+        The number of samples in the shortest PRBS step. the 
+        highest frequency point in the Bode plot will be :math:`F_s / (2 \times` ``period_iters``:math:`)`
+        
+        If :ref:`reg_mode <reg_mode_ident>` is ``V``, :math:`F_s = (\text{FGC.ITER_PERIOD})^{-1}`.
+
+        If :ref:`reg_mode <reg_mode_ident>` is ``I/B``, :math:`F_s` is given in :eq:`Fs`.
+
+    :Type: 
+        ``int``
+          
+    :Default: 
+        1
+          
+    :Recommended: 
+        1
+          
+    :Feasible values: 
+        :math:`[1, \infty)`
+
+----
+
+.. _amplitude_pp:
+
+**Peak-to-Peak Amplitude:**
+          
+    :keyword: 
+        :code:`amplitude_pp`
+    
+        The peak-to-peak amplitude of the PRBS step.
+
+    :Type: 
+        ``float``
+          
+    :Default: 
+        1
+          
+    :Recommended: 
+        Application dependent.
+          
+    :Feasible values: 
+        If :ref:`reg_mode <reg_mode_ident>` is ``V``, :math:`(0, 2 \times \text{LIMITS.V.POS})`
+
+        If :ref:`reg_mode <reg_mode_ident>` is ``I``, :math:`(0, 2 \times \text{LIMITS.I.POS})`
+
+        If :ref:`reg_mode <reg_mode_ident>` is ``B``, :math:`(0, 2 \times \text{LIMITS.B.POS})`

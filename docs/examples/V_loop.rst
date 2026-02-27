@@ -1,0 +1,122 @@
+Controller design for V-Loop
+============================
+
+The examples here will consider designing the RST and ILC controllers for the voltage loop.
+For simplicity, the examples will consider the desired control parameters taken from the default 
+function (see :ref:`API Reference`):
+
+  .. code-block:: python
+
+    >>> import pyfresco.obcd as cd
+    >>> device = 'RFNA.866.01.ETH2'
+    >>> user_pars_v = cd.get_default_v(device)
+    >>> user_pars_v
+    <pyfresco.obcd.props.UiParams object at 0x7fba77baf7f0>
+
+    >>> vars(user_pars_v)
+    {'damp_bw': 75, 'damp_z': 0.8, 'volt_mm': 0.5, 'opt_method': 'Hinf',
+    'volt_bw': 50, 'volt_z': 0.8, 'ref_delay': 0, 'control_mode': 'V',
+    'debug': False, 'positive_coeff': False, 'kd_0': False}
+
+    >>> fgc_v = cd.FgcProperties.from_fgc_v(user_pars_v, device)
+    >>> fgc_v
+    <pyfresco.obcd.props.FgcProperties object at 0x7fba77baf0f0>
+    
+    >>> vars(fgc_v)
+    {'LOAD.OHMS_SER': 9.9999997e-06, 'LOAD.OHMS_MAG': 0.13600001, 'LOAD.OHMS_PAR': 100000000.0, 'LOAD.HENRYS': 0.0063999998, 'LOAD.GAUSS_PER_AMP': 1.0,
+     'VS.ACTUATION': 'VOLTAGE_REF', 'VS.FIRING.DELAY': 0.00166667, 'VS.ACT_DELAY_ITERS': 1.5, 'FGC.ITER_PERIOD': 9.9999997e-05, 'VS.FILTER.FARADS1': 0.039999999,
+     'VS.FILTER.FARADS2': 0.0099999998, 'VS.FILTER.OHMS': 0.0070000002, 'VS.FILTER.HENRYS': 0.00060000003, 'REG.I.INTERNAL.PURE_DELAY_PERIODS': 0.0, 
+     'MEAS.I.DELAY_ITERS': 0.51999998, 'MEAS.V.DELAY_ITERS': 0.51999998}
+
+Model-based design (V)
+----------------------
+
+The model-based design uses the FGC properties to design a controller. It is thus imperative that the correct
+load properties are set in the FGC. This method can be used in cases where a frequency response measurement 
+cannot be obtained from a particular power converter. The model-based design can be completed by simply calling 
+the following functions:
+
+  .. code-block:: python
+
+    >>> X = cd.OptimizeV(fgc_v, user_pars_v)
+    >>> opt_result, df_sens, margins = X.model_opt()
+    >>> vars(opt_result)
+    {'Kd': [0.2702714426345273, 0.015855706981816254, 1.3441402655593147], 
+    'Kv': [0.14642296449100214, 108.34838485558069, 0.3202947134041462]}
+
+The :code:`opt_result` object contains both the damping loop and voltage loop parameters, given by :code:`Kd`
+and :code:`Kv`, respectively. The results from the optimization problem can then be sent to the FGC as follows:
+
+  .. code-block:: python
+
+    >>> cd.FgcProperties.to_fgc_v(opt_result, user_pars_ib, device)
+
+The output dataframe :code:`df_sens` contains the closed-loop sensitivity functions, and is discussed in 
+:ref:`Sensitivity functions`. Finally, :code:`margins` contains the calculated robustness
+margins (in dictionary format) of the closed-loop system: :code:`modulus_margin`, :code:`gain_margin`,
+:code:`phase_margin` and :code:`delay_margin`.
+
+
+Data-driven design (V)
+----------------------
+
+To perform a data-driven design for the voltage loop, three frequency responses are needed:
+
+- F_REF_LIMITED to I_CAPA
+- F_REF_LIMITED to V_MEAS_REF
+- F_REF_LIMITED to I_MEAS
+
+In addition to these frequency responses, the DC gain of the load is also required; let us assume
+that a PRBS experiment was performed with the following log data:
+
+  .. code-block:: python
+
+    >>> df_vreg
+                t_global V_MEAS_REG_(V)           F_REF_LIMITED_(V)           I_CAPA_(A)              
+                      -        t_local    sample           t_local sample       t_local        sample
+    0       1.597837e+09   1.597837e+09  0.000000      1.597837e+09    0.0  1.597837e+09 -3.763275e-21
+    1       1.597837e+09   1.597837e+09  0.000000      1.597837e+09    0.0  1.597837e+09 -3.726354e-21
+    2       1.597837e+09   1.597837e+09  0.000000      1.597837e+09    0.0  1.597837e+09 -3.687887e-21
+    3       1.597837e+09   1.597837e+09  0.000000      1.597837e+09    0.0  1.597837e+09 -3.647898e-21
+    4       1.597837e+09   1.597837e+09  0.000000      1.597837e+09    0.0  1.597837e+09 -3.606406e-21
+    ...              ...            ...       ...               ...    ...           ...           ...
+    >>> df_imeas1
+                t_global    I_MEAS_(A)               V_REF_(V)           V_MEAS_(V)          
+                      -       t_local    sample       t_local sample       t_local    sample
+    0       1.597837e+09  1.597837e+09  0.000000  1.597837e+09    0.0  1.597837e+09  0.000000
+    1       1.597837e+09  1.597837e+09  0.000000  1.597837e+09    0.0  1.597837e+09  0.000000
+    2       1.597837e+09  1.597837e+09  0.000000  1.597837e+09    0.0  1.597837e+09  0.000000
+    3       1.597837e+09  1.597837e+09  0.000000  1.597837e+09    0.0  1.597837e+09  0.000000
+    4       1.597837e+09  1.597837e+09  0.000000  1.597837e+09    0.0  1.597837e+09  0.000000
+    ...              ...           ...       ...           ...    ...           ...       ...
+    >>> df_dcgain
+              t_global    I_MEAS_(A)               V_REF_(V)           V_MEAS_(V)          
+                      -       t_local    sample       t_local sample       t_local    sample
+    0      1.597831e+09  1.597831e+09  7.352385  1.597831e+09    1.0  1.597831e+09  0.999998
+    1      1.597831e+09  1.597831e+09  7.352385  1.597831e+09    1.0  1.597831e+09  0.999998
+    2      1.597831e+09  1.597831e+09  7.352385  1.597831e+09    1.0  1.597831e+09  0.999998
+    3      1.597831e+09  1.597831e+09  7.352385  1.597831e+09    1.0  1.597831e+09  0.999998
+    4      1.597831e+09  1.597831e+09  7.352385  1.597831e+09    1.0  1.597831e+09  0.999998
+    ...             ...           ...       ...           ...    ...           ...       ...
+
+
+The frequency responses and DC gain can then be obtained as follows:
+
+  .. code-block:: python
+
+    >>> import pyfresco.frm as frm
+    >>> df_vmeas = frm.prbs(df_vreg, prbs_vmeas, device)
+    >>> df_icapa = frm.prbs(df_vreg, prbs_icapa, device)
+    >>> df_imeas = frm.prbs(df_imeas1, prbs_imeas, device)
+
+The parameters :code:`prbs_vmeas`, :code:`prbs_icapa`, and :code:`prbs_imeas` are simply the objects containing the
+UI input parameters (see :ref:`PRBS Example`).
+The data-driven design can then be completed by simply calling the following functions:
+
+  .. code-block:: python
+
+    >>> X = cd.OptimizeV(fgc_v, user_pars_v)
+    >>> opt_result, df_sens, margins = X.data_opt(df_icapa, df_vmeas, df_imeas, df_dcgain)
+    >>> vars(opt_result)
+    {'Kd': [0.30363474386072414, 0.014489922006368857, 1.2091239687250508],
+    'Kv': [-0.046388735100899886, 47.702158277587756, 0.7295920508127712]}

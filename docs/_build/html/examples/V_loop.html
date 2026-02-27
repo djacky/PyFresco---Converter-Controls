@@ -1,0 +1,347 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Controller design for V-Loop &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sensitivity function analysis" href="sens.html" />
+    <link rel="prev" title="RST and ILC design for I/B-Loop" href="RST_IB.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/main.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_doc/main.html">API Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="main.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="main.html#obcd-examples">ObCD Examples</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="RST_IB.html">RST and ILC design for I/B-Loop</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Controller design for V-Loop</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#model-based-design-v">Model-based design (V)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data-driven-design-v">Data-driven design (V)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="sens.html">Sensitivity function analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="main.html#frm-examples">FRM Examples</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="main.html">Examples</a> &raquo;</li>
+        
+      <li>Controller design for V-Loop</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/examples/V_loop.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="controller-design-for-v-loop">
+<h1>Controller design for V-Loop<a class="headerlink" href="#controller-design-for-v-loop" title="Permalink to this headline">¶</a></h1>
+<p>The examples here will consider designing the RST and ILC controllers for the voltage loop.
+For simplicity, the examples will consider the desired control parameters taken from the default
+function (see <a class="reference internal" href="../api_doc/api_ref.html#api-reference"><span class="std std-ref">API Reference</span></a>):</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyfresco.obcd</span> <span class="k">as</span> <span class="nn">cd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;RFNA.866.01.ETH2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">user_pars_v</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">get_default_v</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">user_pars_v</span>
+<span class="go">&lt;pyfresco.obcd.props.UiParams object at 0x7fba77baf7f0&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">vars</span><span class="p">(</span><span class="n">user_pars_v</span><span class="p">)</span>
+<span class="go">{&#39;damp_bw&#39;: 75, &#39;damp_z&#39;: 0.8, &#39;volt_mm&#39;: 0.5, &#39;opt_method&#39;: &#39;Hinf&#39;,</span>
+<span class="go">&#39;volt_bw&#39;: 50, &#39;volt_z&#39;: 0.8, &#39;ref_delay&#39;: 0, &#39;control_mode&#39;: &#39;V&#39;,</span>
+<span class="go">&#39;debug&#39;: False, &#39;positive_coeff&#39;: False, &#39;kd_0&#39;: False}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fgc_v</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">FgcProperties</span><span class="o">.</span><span class="n">from_fgc_v</span><span class="p">(</span><span class="n">user_pars_v</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fgc_v</span>
+<span class="go">&lt;pyfresco.obcd.props.FgcProperties object at 0x7fba77baf0f0&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">vars</span><span class="p">(</span><span class="n">fgc_v</span><span class="p">)</span>
+<span class="go">{&#39;LOAD.OHMS_SER&#39;: 9.9999997e-06, &#39;LOAD.OHMS_MAG&#39;: 0.13600001, &#39;LOAD.OHMS_PAR&#39;: 100000000.0, &#39;LOAD.HENRYS&#39;: 0.0063999998, &#39;LOAD.GAUSS_PER_AMP&#39;: 1.0,</span>
+<span class="go"> &#39;VS.ACTUATION&#39;: &#39;VOLTAGE_REF&#39;, &#39;VS.FIRING.DELAY&#39;: 0.00166667, &#39;VS.ACT_DELAY_ITERS&#39;: 1.5, &#39;FGC.ITER_PERIOD&#39;: 9.9999997e-05, &#39;VS.FILTER.FARADS1&#39;: 0.039999999,</span>
+<span class="go"> &#39;VS.FILTER.FARADS2&#39;: 0.0099999998, &#39;VS.FILTER.OHMS&#39;: 0.0070000002, &#39;VS.FILTER.HENRYS&#39;: 0.00060000003, &#39;REG.I.INTERNAL.PURE_DELAY_PERIODS&#39;: 0.0,</span>
+<span class="go"> &#39;MEAS.I.DELAY_ITERS&#39;: 0.51999998, &#39;MEAS.V.DELAY_ITERS&#39;: 0.51999998}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="section" id="model-based-design-v">
+<h2>Model-based design (V)<a class="headerlink" href="#model-based-design-v" title="Permalink to this headline">¶</a></h2>
+<p>The model-based design uses the FGC properties to design a controller. It is thus imperative that the correct
+load properties are set in the FGC. This method can be used in cases where a frequency response measurement
+cannot be obtained from a particular power converter. The model-based design can be completed by simply calling
+the following functions:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">OptimizeV</span><span class="p">(</span><span class="n">fgc_v</span><span class="p">,</span> <span class="n">user_pars_v</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">opt_result</span><span class="p">,</span> <span class="n">df_sens</span><span class="p">,</span> <span class="n">margins</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">model_opt</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">vars</span><span class="p">(</span><span class="n">opt_result</span><span class="p">)</span>
+<span class="go">{&#39;Kd&#39;: [0.2702714426345273, 0.015855706981816254, 1.3441402655593147],</span>
+<span class="go">&#39;Kv&#39;: [0.14642296449100214, 108.34838485558069, 0.3202947134041462]}</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The <code class="code docutils literal notranslate"><span class="pre">opt_result</span></code> object contains both the damping loop and voltage loop parameters, given by <code class="code docutils literal notranslate"><span class="pre">Kd</span></code>
+and <code class="code docutils literal notranslate"><span class="pre">Kv</span></code>, respectively. The results from the optimization problem can then be sent to the FGC as follows:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cd</span><span class="o">.</span><span class="n">FgcProperties</span><span class="o">.</span><span class="n">to_fgc_v</span><span class="p">(</span><span class="n">opt_result</span><span class="p">,</span> <span class="n">user_pars_ib</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The output dataframe <code class="code docutils literal notranslate"><span class="pre">df_sens</span></code> contains the closed-loop sensitivity functions, and is discussed in
+<a class="reference internal" href="sens.html#sensitivity-function-analysis"><span class="std std-ref">Sensitivity function analysis</span></a>. Finally, <code class="code docutils literal notranslate"><span class="pre">margins</span></code> contains the calculated robustness
+margins (in dictionary format) of the closed-loop system: <code class="code docutils literal notranslate"><span class="pre">modulus_margin</span></code>, <code class="code docutils literal notranslate"><span class="pre">gain_margin</span></code>,
+<code class="code docutils literal notranslate"><span class="pre">phase_margin</span></code> and <code class="code docutils literal notranslate"><span class="pre">delay_margin</span></code>.</p>
+</div>
+<div class="section" id="data-driven-design-v">
+<h2>Data-driven design (V)<a class="headerlink" href="#data-driven-design-v" title="Permalink to this headline">¶</a></h2>
+<p>To perform a data-driven design for the voltage loop, three frequency responses are needed:</p>
+<ul class="simple">
+<li><p>F_REF_LIMITED to I_CAPA</p></li>
+<li><p>F_REF_LIMITED to V_MEAS_REF</p></li>
+<li><p>F_REF_LIMITED to I_MEAS</p></li>
+</ul>
+<p>In addition to these frequency responses, the DC gain of the load is also required; let us assume
+that a PRBS experiment was performed with the following log data:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">df_vreg</span>
+<span class="go">            t_global V_MEAS_REG_(V)           F_REF_LIMITED_(V)           I_CAPA_(A)</span>
+<span class="go">                  -        t_local    sample           t_local sample       t_local        sample</span>
+<span class="go">0       1.597837e+09   1.597837e+09  0.000000      1.597837e+09    0.0  1.597837e+09 -3.763275e-21</span>
+<span class="go">1       1.597837e+09   1.597837e+09  0.000000      1.597837e+09    0.0  1.597837e+09 -3.726354e-21</span>
+<span class="go">2       1.597837e+09   1.597837e+09  0.000000      1.597837e+09    0.0  1.597837e+09 -3.687887e-21</span>
+<span class="go">3       1.597837e+09   1.597837e+09  0.000000      1.597837e+09    0.0  1.597837e+09 -3.647898e-21</span>
+<span class="go">4       1.597837e+09   1.597837e+09  0.000000      1.597837e+09    0.0  1.597837e+09 -3.606406e-21</span>
+<span class="gp">... </span>             <span class="o">...</span>            <span class="o">...</span>       <span class="o">...</span>               <span class="o">...</span>    <span class="o">...</span>           <span class="o">...</span>           <span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_imeas1</span>
+<span class="go">            t_global    I_MEAS_(A)               V_REF_(V)           V_MEAS_(V)</span>
+<span class="go">                  -       t_local    sample       t_local sample       t_local    sample</span>
+<span class="go">0       1.597837e+09  1.597837e+09  0.000000  1.597837e+09    0.0  1.597837e+09  0.000000</span>
+<span class="go">1       1.597837e+09  1.597837e+09  0.000000  1.597837e+09    0.0  1.597837e+09  0.000000</span>
+<span class="go">2       1.597837e+09  1.597837e+09  0.000000  1.597837e+09    0.0  1.597837e+09  0.000000</span>
+<span class="go">3       1.597837e+09  1.597837e+09  0.000000  1.597837e+09    0.0  1.597837e+09  0.000000</span>
+<span class="go">4       1.597837e+09  1.597837e+09  0.000000  1.597837e+09    0.0  1.597837e+09  0.000000</span>
+<span class="gp">... </span>             <span class="o">...</span>           <span class="o">...</span>       <span class="o">...</span>           <span class="o">...</span>    <span class="o">...</span>           <span class="o">...</span>       <span class="o">...</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_dcgain</span>
+<span class="go">          t_global    I_MEAS_(A)               V_REF_(V)           V_MEAS_(V)</span>
+<span class="go">                  -       t_local    sample       t_local sample       t_local    sample</span>
+<span class="go">0      1.597831e+09  1.597831e+09  7.352385  1.597831e+09    1.0  1.597831e+09  0.999998</span>
+<span class="go">1      1.597831e+09  1.597831e+09  7.352385  1.597831e+09    1.0  1.597831e+09  0.999998</span>
+<span class="go">2      1.597831e+09  1.597831e+09  7.352385  1.597831e+09    1.0  1.597831e+09  0.999998</span>
+<span class="go">3      1.597831e+09  1.597831e+09  7.352385  1.597831e+09    1.0  1.597831e+09  0.999998</span>
+<span class="go">4      1.597831e+09  1.597831e+09  7.352385  1.597831e+09    1.0  1.597831e+09  0.999998</span>
+<span class="gp">... </span>            <span class="o">...</span>           <span class="o">...</span>       <span class="o">...</span>           <span class="o">...</span>    <span class="o">...</span>           <span class="o">...</span>       <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The frequency responses and DC gain can then be obtained as follows:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyfresco.frm</span> <span class="k">as</span> <span class="nn">frm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_vmeas</span> <span class="o">=</span> <span class="n">frm</span><span class="o">.</span><span class="n">prbs</span><span class="p">(</span><span class="n">df_vreg</span><span class="p">,</span> <span class="n">prbs_vmeas</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_icapa</span> <span class="o">=</span> <span class="n">frm</span><span class="o">.</span><span class="n">prbs</span><span class="p">(</span><span class="n">df_vreg</span><span class="p">,</span> <span class="n">prbs_icapa</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_imeas</span> <span class="o">=</span> <span class="n">frm</span><span class="o">.</span><span class="n">prbs</span><span class="p">(</span><span class="n">df_imeas1</span><span class="p">,</span> <span class="n">prbs_imeas</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The parameters <code class="code docutils literal notranslate"><span class="pre">prbs_vmeas</span></code>, <code class="code docutils literal notranslate"><span class="pre">prbs_icapa</span></code>, and <code class="code docutils literal notranslate"><span class="pre">prbs_imeas</span></code> are simply the objects containing the
+UI input parameters (see <a class="reference internal" href="prbs.html#prbs-example"><span class="std std-ref">PRBS Example</span></a>).
+The data-driven design can then be completed by simply calling the following functions:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">OptimizeV</span><span class="p">(</span><span class="n">fgc_v</span><span class="p">,</span> <span class="n">user_pars_v</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">opt_result</span><span class="p">,</span> <span class="n">df_sens</span><span class="p">,</span> <span class="n">margins</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">data_opt</span><span class="p">(</span><span class="n">df_icapa</span><span class="p">,</span> <span class="n">df_vmeas</span><span class="p">,</span> <span class="n">df_imeas</span><span class="p">,</span> <span class="n">df_dcgain</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">vars</span><span class="p">(</span><span class="n">opt_result</span><span class="p">)</span>
+<span class="go">{&#39;Kd&#39;: [0.30363474386072414, 0.014489922006368857, 1.2091239687250508],</span>
+<span class="go">&#39;Kv&#39;: [-0.046388735100899886, 47.702158277587756, 0.7295920508127712]}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sens.html" class="btn btn-neutral float-right" title="Sensitivity function analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="RST_IB.html" class="btn btn-neutral float-left" title="RST and ILC design for I/B-Loop" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+API Reference
+=============
+
+
+ObCD Objects/Methods
+---------------------
+
+**UiParams.get_default_i(device, rbac)**:
+
+Function to extract the UI parameter default values for current\field control.
+
+    :device:
+        ``str``
+
+        FGC device name.
+
+    :rbac:
+        ``str``
+
+        RBAC token needed to access the FGC properties.
+
+    :Return:
+        ``class object``
+
+        Object which contains the UI paramater default values. See :ref:`UI Parameters` for the object attribute names and values.
+
+**FgcProperties.from_fgc_ib(device, rbac)**:
+
+Function to extract the FGC device property values needed for current/field control.
+If ``test_select`` is ``True``, the property values are extracted based on LOAD.TEST_SELECT.
+If ``test_select`` is ``False``, the property values are extracted based on LOAD.SELECT.
+
+    :device:
+        ``str``
+
+        FGC device name.
+
+    :rbac:
+        ``str``
+
+        RBAC token needed to access the FGC properties.
+
+    :Return:
+        ``class object``
+
+        Object which contains the FGC properties and values needed for current/field control.
+
+**FgcProperties.from_fgc_v(device, rbac)**:
+
+Function to extract the FGC device property values needed for voltage control.
+
+    :device:
+        ``str``
+
+        FGC device name.
+
+    :rbac:
+        ``str``
+
+        RBAC token needed to access the FGC properties.
+
+    :Return:
+        ``class object``
+
+        Object which contains the FGC properties and values needed for voltage control.
+
+**OptimizeIB(props, user_pars).model_opt()**:
+
+Function to call when a model-driven design is desired for the current/field loops.
+
+    :props:
+        ``dict``
+
+        Dictionary format of the FGC properties obtained with 
+        **FgcProperties.from_fgc_ib()**. Note: the ``dict`` format can be 
+        obtained with the ``vars`` Python command.
+
+    :user_pars:
+        ``class object``
+
+        UI input parameters.
+
+    :Return:
+        ``dict`` of ``dict``
+
+        Arrays and values resulting from the model-based optimization (RST and ILC parameters).
+
+**OptimizeIB(props, user_pars).data_opt(df)**:
+
+Function to call when a data-driven design is desired for the current/field loops.
+
+    :props:
+        ``dict``
+
+        Dictionary format of the FGC properties obtained with 
+        **FgcProperties.from_fgc_ib()**. Note: the ``dict`` format can be 
+        obtained with the ``vars`` Python command.
+
+    :user_pars:
+        ``class object``
+
+        UI input parameters.
+
+    :df:
+        ``dataframe``
+
+        Dataframe which contains the ``f``, ``gain`` and ``phase`` arrays from 
+        the frequency response of V_REF to I/B_MEAS
+
+    :Return:
+        ``dict`` of ``dict``
+
+        Arrays and values resulting from the data-driven optimization (RST and ILC parameters).
+
+FRM Objects/Methods
+-------------------

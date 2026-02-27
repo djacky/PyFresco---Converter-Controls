@@ -1,0 +1,267 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PRBS Example &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sine-fit Example" href="sine.html" />
+    <link rel="prev" title="Sensitivity function analysis" href="sens.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/main.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_doc/main.html">API Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="main.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="main.html#obcd-examples">ObCD Examples</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="main.html#frm-examples">FRM Examples</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">PRBS Example</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sine.html">Sine-fit Example</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="main.html">Examples</a> &raquo;</li>
+        
+      <li>PRBS Example</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/examples/prbs.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="prbs-example">
+<h1>PRBS Example<a class="headerlink" href="#prbs-example" title="Permalink to this headline">¶</a></h1>
+<p>Suppose that it is desired to design a controller for the current loop using data-driven
+methods instead of a model. The PRBS method can be used to obtain the frequency response of
+the open-loop system for this purpose. For the current loop, we will need the frequency response from
+V_REF to I_MEAS. Let us assume that the aquisition has been captured with Powerspy and stored in a dataframe
+with the UI parameter values being stored in the object <code class="code docutils literal notranslate"><span class="pre">prbs_pars</span></code>.</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;RFNA.866.01.ETH2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">vars</span><span class="p">(</span><span class="n">prbs_pars</span><span class="p">)</span>
+<span class="go">{&#39;reg_mode&#39;: &#39;V&#39;, &#39;ref_mode&#39;: &#39;V_REF_(V)&#39;, &#39;meas_mode&#39;: &#39;I_MEAS_(A)&#39;, &#39;period_iters&#39;: 1, &#39;amplitude_pp&#39;: 1.0, &#39;k_order&#39;: 13, &#39;num_sequences&#39;: 12}</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_i_time</span>
+<span class="go">                t_global    I_MEAS_(A)                   V_REF_(V)           V_MEAS_(V)</span>
+<span class="go">                -       t_local        sample       t_local sample       t_local sample</span>
+<span class="go">0       1.597840e+09  1.597840e+09 -5.520654e-36  1.597840e+09    0.0  1.597840e+09    0.0</span>
+<span class="go">1       1.597840e+09  1.597840e+09 -5.520654e-36  1.597840e+09    0.0  1.597840e+09    0.0</span>
+<span class="go">2       1.597840e+09  1.597840e+09 -5.520654e-36  1.597840e+09    0.0  1.597840e+09    0.0</span>
+<span class="go">3       1.597840e+09  1.597840e+09 -5.520654e-36  1.597840e+09    0.0  1.597840e+09    0.0</span>
+<span class="go">4       1.597840e+09  1.597840e+09 -5.520654e-36  1.597840e+09    0.0  1.597840e+09    0.0</span>
+<span class="gp">... </span>             <span class="o">...</span>           <span class="o">...</span>           <span class="o">...</span>           <span class="o">...</span>    <span class="o">...</span>           <span class="o">...</span>    <span class="o">...</span>
+</pre></div>
+</div>
+</div></blockquote>
+<div class="figure align-default" id="id1">
+<span id="prbs-powerspy"></span><img alt="PRBS aquisition" src="../_images/prbs_powerspy.png" />
+<p class="caption"><span class="caption-number">Fig. 7 </span><span class="caption-text">PRBS aquisition with V_REF (green) and I_MEAS (red).</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<p>With this data, the frequency response can easily be obtained by calling the following functions:</p>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyfresco.frm</span> <span class="k">as</span> <span class="nn">frm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">F</span> <span class="o">=</span> <span class="n">frm</span><span class="o">.</span><span class="n">Frm_methods</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_freq</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">prbs</span><span class="p">(</span><span class="n">df_i_time</span><span class="p">,</span> <span class="n">prbs_pars</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">df_freq</span>
+
+<span class="go">            f        gain       phase</span>
+<span class="go">0       1.220852   16.797757  -20.015512</span>
+<span class="go">1       2.441704   15.510021  -36.172323</span>
+<span class="go">2       3.662556   13.963785  -47.810938</span>
+<span class="go">3       4.883409   12.442825  -56.015474</span>
+<span class="go">4       6.104261   11.044407  -61.922417</span>
+<span class="go">..           ...         ...         ...</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sine.html" class="btn btn-neutral float-right" title="Sine-fit Example" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="sens.html" class="btn btn-neutral float-left" title="Sensitivity function analysis" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

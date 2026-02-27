@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Tutorial &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Current/Field Control" href="current_field.html" />
+    <link rel="prev" title="Python Frequency RESponse-based Controller Optimization (PyFresco)" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#obcd">ObCD</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="current_field.html">Current/Field Control</a></li>
+<li class="toctree-l3"><a class="reference internal" href="voltage.html">Voltage Control</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#frm">FRM</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="prbs.html">PRBS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sine.html">Sine-Fit</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_doc/main.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/main.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Tutorial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorial/main.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="tutorial">
+<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this headline">¶</a></h1>
+<p>PyFresco includes two packages that each perform different functions:
+the Optimization-based Controller Design (ObCD) package and the Frequency Response Measurement (FRM) package.</p>
+<div class="section" id="obcd">
+<h2>ObCD<a class="headerlink" href="#obcd" title="Permalink to this headline">¶</a></h2>
+<p>The purpose of this tool is to synthesize controllers for the voltage, current,
+and/or field loops in the power converter control system. The algorithms use advanced
+convex optimization methods to synthesize these controllers by using the frequency
+response of a given open-loop system. The ObCD package uses the Python convex optimization library
+<a class="reference external" href="https://www.cvxpy.org/">CVXPY</a> to synthesize the controllers for all
+the control loops. This library contains several free solvers that can
+be used for obtaining an optimal solution. PyFresco uses the
+<a class="reference external" href="https://web.stanford.edu/~boyd/papers/ecos.html">ECOS</a> and
+<a class="reference external" href="https://cvxopt.org/">CVXOPT</a> solvers, as these solvers are needed
+for the types of problems used by PyFresco (i.e., semi-definite programming
+(SDP) problems).The desired performance is obtained by minimizing
+a weighted norm of the appropriate sensitivity function; the user will be able to
+select what kind of performance is desired in the advanced properties of the tool. In
+synthesizing these controllers, the user can provide a model (by setting the correct
+FGC properties) or by measuring the appropriate frequency response function (i.e.,
+the open-loop dynamics).</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="current_field.html">Current/Field Control</a></li>
+<li class="toctree-l1"><a class="reference internal" href="voltage.html">Voltage Control</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="frm">
+<h2>FRM<a class="headerlink" href="#frm" title="Permalink to this headline">¶</a></h2>
+<p>This tool enables a user to obtain the frequency response between two desired signals; this frequency
+response can be used for general analysis purposes (i.e., confirming the behavior of a load or the
+performance of a controller) or to design a regulator. This measurement tool is important in applications
+where the load dynamics are uncertain (i.e., uncertain magnet parameters or delay) or for applications where
+the effects of Eddy currents are significant. There are two methods that are implemented in the FGC for
+measuring these dynamics:</p>
+<ul class="simple">
+<li><p>A <a class="reference external" href="https://www.sciencedirect.com/science/article/pii/S0019057811001182">sine-fit algorithm</a> which calculates the magnitude
+and phase of a system at user-defined frequency points.</p></li>
+<li><p>A method which injects a pseudorandom binary sequence (PRBS), which is a signal similar to white noise
+and excites all frequencies.</p></li>
+</ul>
+<p>Each of these methods both have advantages and disadvantages (which will be discussed in this document).
+The measured frequency response of the open-loop system can also be used to design a regulator. With the
+frequency response data of a system, the data-driven methods in the ObCD package can be used to ensure the
+desired performance and robustness of a closed-loop power converter control system. If the user is interested
+in designing controllers for the voltage, current, and/or field loops, then the following frequency responses
+should be obtained (with either PRBS or sine-fit):</p>
+<ul class="simple">
+<li><p>For voltage control (<a class="reference internal" href="../api_doc/ui_params_obcd.html#control-mode"><span class="std std-ref">Control Mode</span></a> = <code class="docutils literal notranslate"><span class="pre">V</span></code>):</p>
+<ul>
+<li><p><a class="reference internal" href="../api_doc/ui_params_frm.html#ref-mode"><span class="std std-ref">Input</span></a>: F_REF_LIMITED</p></li>
+<li><p><a class="reference internal" href="../api_doc/ui_params_frm.html#meas-mode"><span class="std std-ref">Output</span></a>: [I_CAPA, V_MEAS_REG, I_MEAS]</p></li>
+</ul>
+</li>
+<li><p>For current control (<a class="reference internal" href="../api_doc/ui_params_obcd.html#control-mode"><span class="std std-ref">Control Mode</span></a> = <code class="docutils literal notranslate"><span class="pre">I</span></code>):</p>
+<ul>
+<li><p><a class="reference internal" href="../api_doc/ui_params_frm.html#ref-mode"><span class="std std-ref">Input</span></a>: V_REF</p></li>
+<li><p><a class="reference internal" href="../api_doc/ui_params_frm.html#meas-mode"><span class="std std-ref">Output</span></a>: I_MEAS</p></li>
+</ul>
+</li>
+<li><p>For field control (<a class="reference internal" href="../api_doc/ui_params_obcd.html#control-mode"><span class="std std-ref">Control Mode</span></a> = <code class="docutils literal notranslate"><span class="pre">B</span></code>):</p>
+<ul>
+<li><p><a class="reference internal" href="../api_doc/ui_params_frm.html#ref-mode"><span class="std std-ref">Input</span></a>: V_REF</p></li>
+<li><p><a class="reference internal" href="../api_doc/ui_params_frm.html#meas-mode"><span class="std std-ref">Output</span></a>: B_MEAS</p></li>
+</ul>
+</li>
+</ul>
+<p>The measured frequency response represents the ratio of the Fourier transforms of the input and output signals
+(i.e., <span class="math notranslate nohighlight">\(G(j\omega) = \mathcal{F}\{\text{Output} \} / \mathcal{F}\{\text{Input} \}\)</span>,
+where <span class="math notranslate nohighlight">\(\mathcal{F}\{\cdot \}\)</span> signifies the Fourier transform of the argument).</p>
+<dl>
+<dt>Remark:</dt><dd><p>When using the sine-fit or PRBS method, a stabilizing RST controller must be loaded into the FGC for both open-loop
+and closed-loop experiments. This is due to the fact that the measurement algorithm is initialized in closed-loop mode
+in order to obtain a proper DC gain measurement and reduce drift. If a stabilizing controller is not available and the
+current or field loops are unstable, one can set the values below in the following properties:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+   &amp;\text{REG.I/B.EXTERNAL.OP.R }&amp; \alpha \text{ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0} \\
+   &amp;\text{REG.I/B.EXTERNAL.OP.S }&amp; \text{1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0} \\
+   &amp;\text{REG.I/B.EXTERNAL.OP.T }&amp; \alpha \text{ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0} \\
+   &amp;\text{REG.I/B.EXTERNAL_ALG[x] }&amp; \text{ENABLED} \\
+\end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(x\)</span> is selected using the property LOAD.SELECT, which can have a value between 0 and 3, and <span class="math notranslate nohighlight">\(\alpha\)</span> is an
+arbitrarily small (positive) constant. Since the open-loop system is stable for any load (assuming that the voltage source
+is stable), there will always exist an arbitrarily small <span class="math notranslate nohighlight">\(\alpha\)</span> that will stabilize the closed-loop system.</p>
+</dd>
+</dl>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="prbs.html">PRBS</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sine.html">Sine-Fit</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="current_field.html" class="btn btn-neutral float-right" title="Current/Field Control" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../index.html" class="btn btn-neutral float-left" title="Python Frequency RESponse-based Controller Optimization (PyFresco)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

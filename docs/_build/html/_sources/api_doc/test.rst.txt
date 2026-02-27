@@ -1,0 +1,10 @@
+PLACEHOLDER TITLE
+=================
+
+
+.. autoclass:: pyfresco.obcd.props.UiParams
+    :members:
+    :undoc-members:
+
+    .. automethod:: __init__
+

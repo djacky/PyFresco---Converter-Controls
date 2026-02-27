@@ -1,0 +1,869 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>UI Parameters &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="api_ref.html" />
+    <link rel="prev" title="API Documentation" href="main.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/main.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="main.html">API Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">UI Parameters</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#o-bcd-keys">ObCD Keys</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#current-field-keys">Current/Field Keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#voltage-keys">Voltage Keys</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#frm-keys">FRM Keys</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sine-fit-keys">Sine-Fit Keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#prbs-keys">PRBS Keys</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_ref.html">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/main.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="main.html">API Documentation</a> &raquo;</li>
+        
+      <li>UI Parameters</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api_doc/ui_params.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ui-parameters">
+<h1>UI Parameters<a class="headerlink" href="#ui-parameters" title="Permalink to this headline">¶</a></h1>
+<p>The regulation rate is used to determine some of the UI parameter limits; the regulation rate is defined as:</p>
+<div class="math notranslate nohighlight" id="equation-fs">
+<span class="eqno">(1)<a class="headerlink" href="#equation-fs" title="Permalink to this equation">¶</a></span>\[F_s =(\text{FGC.ITER_PERIOD} \times \text{REG.I/B.PERIOD_ITERS[x]})^{-1}\]</div>
+<div class="section" id="o-bcd-keys">
+<h2>ObCD Keys<a class="headerlink" href="#o-bcd-keys" title="Permalink to this headline">¶</a></h2>
+<p id="reg-mode"><strong>Reg. Mode:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">reg_mode</span></code></p>
+<p>Desired control loop to regulate.</p>
+<p><code class="docutils literal notranslate"><span class="pre">V</span></code>: Design controller for damping and voltage loop</p>
+<p><code class="docutils literal notranslate"><span class="pre">I</span></code>: Design RST and ILC controllers for current loop</p>
+<p><code class="docutils literal notranslate"><span class="pre">B</span></code>: Design RST and ILC controllers for field loop</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>Not applicable.</p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Not applicable.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p>[<code class="docutils literal notranslate"><span class="pre">I</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">V</span></code>]</p>
+</dd>
+</dl>
+</div></blockquote>
+<div class="section" id="current-field-keys">
+<h3>Current/Field Keys<a class="headerlink" href="#current-field-keys" title="Permalink to this headline">¶</a></h3>
+<p id="des-bw"><strong>Bandwidth:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">des_bw</span></code></p>
+<p>Desired closed-loop bandwidth <span class="math notranslate nohighlight">\(f_{ib}\)</span> [Hz].</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(F_s/15\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(F_s/25 \leq f_{ib} \leq F_s/8\)</span></p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,F_s/2)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="des-z"><strong>Damping:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">des_z</span></code></p>
+<p>Desired closed-loop damping <span class="math notranslate nohighlight">\(\zeta_{ib}\)</span> [-].</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(0.8\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(0.8\)</span></p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,1)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="des-mm"><strong>Modulus Margin:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">des_mm</span></code></p>
+<p>Desired modulus margin <span class="math notranslate nohighlight">\(\Delta M_{ib}\)</span> [-].</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(0.5\)</span></p>
+</dd>
+<dt class="field-even">Recommended*</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(0.5\)</span></p>
+<p>A higher value will increase the system robustness to uncertainties, but will degrade the tracking performance.
+Conversly, a lower value will decrease the system robustness to uncertainties, but will enhance the tracking performance.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,1)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="ref-delay"><strong>Reference Delay:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">ref_delay</span></code></p>
+<p>Value of delay <span class="math notranslate nohighlight">\(d_r\)</span> [s] to add on the desired second-order system.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(0\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>In general, <span class="math notranslate nohighlight">\(d_r=0\)</span> is sufficient for the desired performance. For high performance systems, set <span class="math notranslate nohighlight">\(d_r\)</span> equal to the open-loop delay.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\([0,\infty)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="n-integrators"><strong>Integrators:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">n_integrators</span></code></p>
+<p>Desired number of integrators <span class="math notranslate nohighlight">\(n_I\)</span> in the <span class="math notranslate nohighlight">\(S(z)\)</span> polynomial.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(2\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(2\)</span></p>
+<p>For systems with large open-loop delays, <span class="math notranslate nohighlight">\(n_I=1\)</span> may be prefered.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,3]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="opt-method"><strong>Optimization Method:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">opt_method</span></code></p>
+<p>Desired optimization method.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(H_\infty\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Depends on the type of desired performance. See <a class="reference internal" href="../tutorial/current_field.html#current-field-control"><span class="std std-ref">Current/Field Control</span></a> for more information</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\([H_\infty,H_2,H_1]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="n-r"><strong>Num. Coefficients (R):</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">n_r</span></code></p>
+<p>Desired number of coefficients <span class="math notranslate nohighlight">\(n_r\)</span> in the <span class="math notranslate nohighlight">\(R(z)\)</span> polynomial.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(6\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(6\)</span></p>
+<p>A larger value can be used for high performance systems.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((3,16]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="n-s"><strong>Num. Coefficients (S):</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">n_s</span></code></p>
+<p>Desired number of coefficients <span class="math notranslate nohighlight">\(n_s\)</span> in the <span class="math notranslate nohighlight">\(S(z)\)</span> polynomial.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(6\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(6\)</span></p>
+<p>A larger value can be used for high performance systems.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((3,16]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="n-t"><strong>Num. Coefficients (T):</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">n_t</span></code></p>
+<p>Desired number of coefficients <span class="math notranslate nohighlight">\(n_t\)</span> in the <span class="math notranslate nohighlight">\(T(z)\)</span> polynomial.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(6\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(6\)</span></p>
+<p>A larger value can be used for high performance systems. If <code class="docutils literal notranslate"><span class="pre">opt_method</span></code> is set
+to <span class="math notranslate nohighlight">\(H_1\)</span>, set this parameter greater than <code class="docutils literal notranslate"><span class="pre">n_r</span></code> and <code class="docutils literal notranslate"><span class="pre">n_s</span></code>.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((3,16]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="n-ilc"><strong>L-Filter Order</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">n_ilc</span></code></p>
+<p>Order <span class="math notranslate nohighlight">\(n_{ilc}\)</span> of the L-filter used for the ILC algorithm.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(5\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Application dependent. In general, a value <span class="math notranslate nohighlight">\(n_{ilc}&gt;4\)</span> is sufficient.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,12]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="n-q"><strong>Q-Filter Order:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">n_q</span></code></p>
+<p>Order <span class="math notranslate nohighlight">\(n_{q}\)</span> of the Q-filter (non-causal FIR) used for the ILC algorithm.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(5\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Application dependent. In general, a value <span class="math notranslate nohighlight">\(n_{q}&gt;4\)</span> is sufficient.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,12]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="q-bw"><strong>Q-Filter Bandwidth:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">q_bw</span></code></p>
+<p>Desired bandwidth <span class="math notranslate nohighlight">\(f_q\)</span> [Hz] of the ILC Q-filter.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(0\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Application dependent. A value <span class="math notranslate nohighlight">\(f_q&gt;0\)</span> will enable the Q-filter optimization. A value of <span class="math notranslate nohighlight">\(f_q = 0\)</span> will set the Q-filter equal to <span class="math notranslate nohighlight">\(1\)</span>.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,F_s / 2)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<hr class="docutils" />
+<div class="section" id="voltage-keys">
+<h3>Voltage Keys<a class="headerlink" href="#voltage-keys" title="Permalink to this headline">¶</a></h3>
+<p id="damp-bw"><strong>Damping-loop Bandwidth:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">damp_bw</span></code></p>
+<p>Desired closed-loop bandwidth <span class="math notranslate nohighlight">\(f_d\)</span> [Hz] for the damping loop.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(50\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Application dependent.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,\infty)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="damp-z"><strong>Damping-loop Damping:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">damp_z</span></code></p>
+<p>Desired closed-loop damping <span class="math notranslate nohighlight">\(\zeta_d\)</span> [-] for the damping loop.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(0.8\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(0.8\)</span></p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,1)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="volt-bw"><strong>Voltage-loop Bandwidth:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">volt_bw</span></code></p>
+<p>Desired closed-loop bandwidth <span class="math notranslate nohighlight">\(f_v\)</span> [Hz] for the voltage loop.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(50\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Application dependent.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,\infty)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="volt-z"><strong>Voltage-loop Damping:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">volt_z</span></code></p>
+<p>Desired closed-loop damping <span class="math notranslate nohighlight">\(\zeta_v\)</span> [-] for the voltage loop.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(0.8\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(0.8\)</span></p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,1)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="volt-mm"><strong>Voltage Modulus Margin:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">volt_mm</span></code></p>
+<p>Desired modulus margin <span class="math notranslate nohighlight">\(\Delta M_v\)</span> [-] for the voltage loop.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(0.5\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(0.5\)</span></p>
+<p>A higher value will increase the system robustness to uncertainties, but will degrade the tracking performance.
+Conversly, a lower value will decrease the system robustness to uncertainties, but will enhance the tracking performanc</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0,1)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="ref-delay-v"><strong>Reference Delay:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">ref_delay</span></code></p>
+<p>Value of delay <span class="math notranslate nohighlight">\(d_r\)</span> [s] to add on the desired second-order system.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(0\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>In general, <span class="math notranslate nohighlight">\(d_r=0\)</span> is sufficient for the desired performance. For high performance systems, set <span class="math notranslate nohighlight">\(d_r\)</span> equal to the open-loop delay.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\([0,\infty)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="opt-method-v"><strong>Optimization Method:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">opt_method</span></code></p>
+<p>Desired optimization method.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(H_\infty\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Depends on the type of desired performance. See <a class="reference internal" href="../tutorial/voltage.html#voltage-control"><span class="std std-ref">Voltage Control</span></a> for more information</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\([H_\infty,H_2]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+</div>
+<hr class="docutils" />
+<div class="section" id="frm-keys">
+<h2>FRM Keys<a class="headerlink" href="#frm-keys" title="Permalink to this headline">¶</a></h2>
+<p id="reg-mode-ident"><strong>Reg. Mode:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">reg_mode</span></code></p>
+<p>Desired mode to be in when performing the measurement experiments.</p>
+<p><code class="docutils literal notranslate"><span class="pre">V</span></code>: Control system is in open-loop mode. (in the FGC, this is set with REG.MODE V)</p>
+<p><code class="docutils literal notranslate"><span class="pre">I</span></code>: RST for the current-loop is enabled (in the FGC, this is set with REG.MODE I)</p>
+<p><code class="docutils literal notranslate"><span class="pre">B</span></code>: RST for the field-loop is enabled (in the FGC, this is set with REG.MODE B)</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>Not applicable.</p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>If the purpose of the measurement is to synthesize an RST and ILC controller, use <code class="docutils literal notranslate"><span class="pre">V</span></code>.
+<code class="docutils literal notranslate"><span class="pre">I</span></code> or <code class="docutils literal notranslate"><span class="pre">B</span></code> are generally used for analysis purposes (i.e., confirming the closed-loop behavior).</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p>[<code class="docutils literal notranslate"><span class="pre">I</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">V</span></code>]</p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<div class="section" id="sine-fit-keys">
+<h3>Sine-Fit Keys<a class="headerlink" href="#sine-fit-keys" title="Permalink to this headline">¶</a></h3>
+<p id="ref-mode-sine"><strong>Input:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">ref_mode</span></code></p>
+<p>The input signal name of the measurement (i.e., signal name from FGC log).</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">V_REF</span></code></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Not applicable.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p>[<code class="docutils literal notranslate"><span class="pre">V_REF</span></code>, <code class="docutils literal notranslate"><span class="pre">F_REF_LIMITED</span></code>, <code class="docutils literal notranslate"><span class="pre">V_MEAS</span></code>, <code class="docutils literal notranslate"><span class="pre">I_REF_ADV</span></code>, <code class="docutils literal notranslate"><span class="pre">B_REF_ADV</span></code>]</p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="meas-mode-sine"><strong>Output:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">meas_mode</span></code></p>
+<p>The output signal name of the measurement (i.e., signal name from FGC log).</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">I_MEAS</span></code></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Not applicable.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p>[<code class="docutils literal notranslate"><span class="pre">V_MEAS</span></code>, <code class="docutils literal notranslate"><span class="pre">I_MEAS</span></code>, <code class="docutils literal notranslate"><span class="pre">B_MEAS</span></code>, <code class="docutils literal notranslate"><span class="pre">V_MEAS_REG</span></code>,
+<code class="docutils literal notranslate"><span class="pre">I_MEAS_REG</span></code>, <code class="docutils literal notranslate"><span class="pre">B_MEAS_REG</span></code>, <code class="docutils literal notranslate"><span class="pre">I_CAPA</span></code>]</p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<hr class="docutils" />
+<div class="section" id="prbs-keys">
+<h3>PRBS Keys<a class="headerlink" href="#prbs-keys" title="Permalink to this headline">¶</a></h3>
+<p id="ref-mode-prbs"><strong>Input:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">ref_mode</span></code></p>
+<p>The input signal name of the measurement (i.e., signal name from FGC log).</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">V_REF</span></code></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Not applicable.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p>[<code class="docutils literal notranslate"><span class="pre">V_REF</span></code>, <code class="docutils literal notranslate"><span class="pre">F_REF_LIMITED</span></code>, <code class="docutils literal notranslate"><span class="pre">V_MEAS</span></code>, <code class="docutils literal notranslate"><span class="pre">I_REF_ADV</span></code>, <code class="docutils literal notranslate"><span class="pre">B_REF_ADV</span></code>]</p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="meas-mode-prbs"><strong>Output:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">meas_mode</span></code></p>
+<p>The output signal name of the measurement (i.e., signal name from FGC log).</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">I_MEAS</span></code></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Not applicable.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p>[<code class="docutils literal notranslate"><span class="pre">V_MEAS</span></code>, <code class="docutils literal notranslate"><span class="pre">I_MEAS</span></code>, <code class="docutils literal notranslate"><span class="pre">B_MEAS</span></code>, <code class="docutils literal notranslate"><span class="pre">V_MEAS_REG</span></code>,
+<code class="docutils literal notranslate"><span class="pre">I_MEAS_REG</span></code>, <code class="docutils literal notranslate"><span class="pre">B_MEAS_REG</span></code>, <code class="docutils literal notranslate"><span class="pre">I_CAPA</span></code>]</p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="period-iters"><strong>Period Iters</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">period_iters</span></code></p>
+<p>The number of samples in the shortest PRBS step. the
+highest frequency point in the Bode plot will be <span class="math notranslate nohighlight">\(F_s / (2 \times\)</span> <code class="docutils literal notranslate"><span class="pre">period_iters</span></code><span class="math notranslate nohighlight">\()\)</span></p>
+<p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">reg_mode</span></a> is <code class="docutils literal notranslate"><span class="pre">V</span></code>, <span class="math notranslate nohighlight">\(F_s = (\text{FGC.ITER_PERIOD})^{-1}\)</span>.</p>
+<p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">reg_mode</span></a> is <code class="docutils literal notranslate"><span class="pre">I/B</span></code>, <span class="math notranslate nohighlight">\(F_s\)</span> is given in <a class="reference internal" href="#equation-fs">(1)</a>.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>1</p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>1</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\([1, \infty)\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="pp-amp"><strong>Peak-to-Peak Amplitude:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">amplitude_pp</span></code></p>
+<p>The peak-to-peak amplitude of the PRBS step.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>1</p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Application dependent.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">reg_mode</span></a> is <code class="docutils literal notranslate"><span class="pre">V</span></code>, <span class="math notranslate nohighlight">\((0, 2 \times \text{LIMITS.V.POS})\)</span></p>
+<p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">reg_mode</span></a> is <code class="docutils literal notranslate"><span class="pre">I</span></code>, <span class="math notranslate nohighlight">\((0, 2 \times \text{LIMITS.I.POS})\)</span></p>
+<p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">reg_mode</span></a> is <code class="docutils literal notranslate"><span class="pre">B</span></code>, <span class="math notranslate nohighlight">\((0, 2 \times \text{LIMITS.B.POS})\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api_ref.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="main.html" class="btn btn-neutral float-left" title="API Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

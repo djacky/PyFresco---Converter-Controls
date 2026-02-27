@@ -1,0 +1,50 @@
+Get/Send controller values to FGC
+=================================
+
+  .. code-block:: python
+
+    >>> import pyfresco.obcd as cd
+    >>> device = 'RFNA.866.01.ETH2'
+    >>> user_pars_ib = cd.get_default_i(device)
+    >>> user_pars_ib
+    <pyfresco.obcd.props.UiParams object at 0x7f1b94368160>
+
+    >>> vars(user_pars_ib)
+    {'des_bw': 133.33333333333334, 'des_z': 0.8, 'des_mm': 0.5, 'n_integrators': 2, 'ref_delay': 0, 'opt_method': 'Hinf', 'n_r': 6, 
+    'n_s': 6, 'n_t': 6, 'n_ilc': 5, 'n_q': 5, 'q_bw': 0, 'control_mode': 'I', 'test_select': False, 'noise_rej': []}
+    
+    >>> fgc_ib = cd.FgcProperties.from_fgc_ib(user_pars_ib, device)
+    >>> fgc_ib
+    <pyfresco.obcd.props.FgcProperties object at 0x7f1b943684a8>
+    
+    >>> vars(fgc_ib)
+    {'LOAD.OHMS_SER': 9.9999997e-06, 'LOAD.OHMS_MAG': 0.13600001, 'LOAD.OHMS_PAR': 100000000.0, 'LOAD.HENRYS': 0.0063999998, 
+    'LOAD.GAUSS_PER_AMP': 1.0, 'VS.SIM.BANDWIDTH': 1000.0, 'VS.SIM.Z': 0.69999999, 'VS.ACTUATION': 'VOLTAGE_REF', 
+    'VS.FIRING.DELAY': 0.00166667, 'VS.ACT_DELAY_ITERS': 1.5, 'REG.I.PERIOD_ITERS': 5.0, 'FGC.ITER_PERIOD': 9.9999997e-05, 
+    'REG.I.INTERNAL.PURE_DELAY_PERIODS': 0.0, 'MEAS.I.DELAY_ITERS': 0.51999998, 'MEAS.V.DELAY_ITERS': 0.51999998, 
+    'REG.I.EXTERNAL.MEAS_SELECT': 'UNFILTERED', 'REG.I.EXTERNAL.Z': 0.80000001, 'REG.I.EXTERNAL.MOD_MARGIN': 0.5, 'MEAS.I.FIR_LENGTHS': [0, 0]}
+
+
+
+
+  .. code-block:: python
+
+    >>> import pyfresco.obcd as cd
+    >>> device = 'RFNA.866.01.ETH2'
+    >>> user_pars_v = cd.get_default_v(device)
+    >>> user_pars_v
+    <pyfresco.obcd.props.UiParams object at 0x7fba77baf7f0>
+
+    >>> vars(user_pars_v)
+    {'damp_bw': 75, 'damp_z': 0.8, 'volt_mm': 0.5, 'opt_method': 'Hinf', 'volt_bw': 50, 'volt_z': 0.8, 'ref_delay': 0, 'control_mode': 'V'}
+
+    >>> fgc_v = cd.FgcProperties.from_fgc_v(user_pars_v, device)
+    >>> fgc_v
+    <pyfresco.obcd.props.FgcProperties object at 0x7fba77baf0f0>
+    
+    >>> vars(fgc_v)
+    {'LOAD.OHMS_SER': 9.9999997e-06, 'LOAD.OHMS_MAG': 0.13600001, 'LOAD.OHMS_PAR': 100000000.0, 'LOAD.HENRYS': 0.0063999998, 'LOAD.GAUSS_PER_AMP': 1.0,
+     'VS.ACTUATION': 'VOLTAGE_REF', 'VS.FIRING.DELAY': 0.00166667, 'VS.ACT_DELAY_ITERS': 1.5, 'FGC.ITER_PERIOD': 9.9999997e-05, 'VS.FILTER.FARADS1': 0.039999999,
+     'VS.FILTER.FARADS2': 0.0099999998, 'VS.FILTER.OHMS': 0.0070000002, 'VS.FILTER.HENRYS': 0.00060000003, 'REG.I.INTERNAL.PURE_DELAY_PERIODS': 0.0, 
+     'MEAS.I.DELAY_ITERS': 0.51999998, 'MEAS.V.DELAY_ITERS': 0.51999998}
+    

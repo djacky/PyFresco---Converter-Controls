@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>UI Parameters (FRM) &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="API Reference" href="api_ref.html" />
+    <link rel="prev" title="UI Parameters (ObCD)" href="ui_params_obcd.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/main.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="main.html">API Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="ui_params_obcd.html">UI Parameters (ObCD)</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">UI Parameters (FRM)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#frm-keys">FRM Keys</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#sine-fit-keys">Sine-Fit Keys</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#prbs-keys">PRBS Keys</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api_ref.html">API Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/main.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="main.html">API Documentation</a> &raquo;</li>
+        
+      <li>UI Parameters (FRM)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/api_doc/ui_params_frm.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="ui-parameters-frm">
+<h1>UI Parameters (FRM)<a class="headerlink" href="#ui-parameters-frm" title="Permalink to this headline">¶</a></h1>
+<p>This section contains all of the parameters and keys that PyFresco uses to measure the frequency
+response of a power converter system. These parameters are UI inputs that should be stored as class attributes.</p>
+<div class="section" id="frm-keys">
+<h2>FRM Keys<a class="headerlink" href="#frm-keys" title="Permalink to this headline">¶</a></h2>
+<p>The PRBS and Sine-fit methods both require three main parameters that the user must select:
+Regulation Mode, Input, and Output. The details of these parameters are outline below.
+Note that the Sine-fit algorithm does not require other input parameters to obtain a frequency response.</p>
+<p id="reg-mode-ident"><strong>Regulation Mode:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">reg_mode</span></code></p>
+<p>Desired mode to be in when performing the measurement experiments.</p>
+<p><code class="docutils literal notranslate"><span class="pre">V</span></code>: Control system is in open-loop mode. (in the FGC, this is set with REG.MODE V)</p>
+<p><code class="docutils literal notranslate"><span class="pre">I</span></code>: RST for the current-loop is enabled (in the FGC, this is set with REG.MODE I)</p>
+<p><code class="docutils literal notranslate"><span class="pre">B</span></code>: RST for the field-loop is enabled (in the FGC, this is set with REG.MODE B)</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">V</span></code></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>If the purpose of the measurement is to synthesize an RST and ILC controller, use <code class="docutils literal notranslate"><span class="pre">V</span></code>.
+For synthesizing controllers for the voltage loop, use <code class="docutils literal notranslate"><span class="pre">V</span></code>.
+<code class="docutils literal notranslate"><span class="pre">I</span></code> or <code class="docutils literal notranslate"><span class="pre">B</span></code> are generally used for analysis purposes (i.e., confirming the closed-loop behavior).</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p>[<code class="docutils literal notranslate"><span class="pre">I</span></code>, <code class="docutils literal notranslate"><span class="pre">B</span></code>, <code class="docutils literal notranslate"><span class="pre">V</span></code>]</p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="ref-mode"><strong>Input:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">ref_mode</span></code></p>
+<p>The input signal name of the measurement (i.e., signal name from FGC log).</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">V_REF</span></code></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Not applicable.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">Regulation Mode</span></a> is <code class="docutils literal notranslate"><span class="pre">V</span></code>:
+[<code class="docutils literal notranslate"><span class="pre">V_REF</span></code>, <code class="docutils literal notranslate"><span class="pre">F_REF_LIMITED</span></code>, <code class="docutils literal notranslate"><span class="pre">V_MEAS</span></code>]</p>
+<p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">Regulation Mode</span></a> is <code class="docutils literal notranslate"><span class="pre">I</span></code>:
+[<code class="docutils literal notranslate"><span class="pre">I_REF_ADV</span></code>]</p>
+<p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">Regulation Mode</span></a> is <code class="docutils literal notranslate"><span class="pre">B</span></code>:
+[<code class="docutils literal notranslate"><span class="pre">B_REF_ADV</span></code>]</p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="meas-mode"><strong>Output:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">meas_mode</span></code></p>
+<p>The output signal name of the measurement (i.e., signal name from FGC log).</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">I_MEAS</span></code></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Not applicable.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">Regulation Mode</span></a> is <code class="docutils literal notranslate"><span class="pre">V</span></code>:
+[<code class="docutils literal notranslate"><span class="pre">V_MEAS</span></code>, <code class="docutils literal notranslate"><span class="pre">I_CAPA</span></code>, <code class="docutils literal notranslate"><span class="pre">V_MEAS_REG</span></code>, <code class="docutils literal notranslate"><span class="pre">I_MEAS</span></code>, <code class="docutils literal notranslate"><span class="pre">B_MEAS</span></code>]</p>
+<p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">Regulation Mode</span></a> is <code class="docutils literal notranslate"><span class="pre">I</span></code>:
+[<code class="docutils literal notranslate"><span class="pre">I_MEAS_REG</span></code>]</p>
+<p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">Regulation Mode</span></a> is <code class="docutils literal notranslate"><span class="pre">B</span></code>:
+[<code class="docutils literal notranslate"><span class="pre">B_MEAS_REG</span></code>]</p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<div class="section" id="sine-fit-keys">
+<h3>Sine-Fit Keys<a class="headerlink" href="#sine-fit-keys" title="Permalink to this headline">¶</a></h3>
+<p id="num-freq"><strong>Frequency Array:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">num_freq</span></code></p>
+<p>Number of frequencies points to measure within the user defined frequencies <span class="math notranslate nohighlight">\([f_{min},f_{max}]\)</span>.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\(200\)</span></p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>For controller synthesis purposes, values between 150 and 300 should suffice.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\([2, 10^4]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+<hr class="docutils" />
+<div class="section" id="prbs-keys">
+<h3>PRBS Keys<a class="headerlink" href="#prbs-keys" title="Permalink to this headline">¶</a></h3>
+<p id="period-iters"><strong>Period Iters:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">period_iters</span></code></p>
+<p>The number of samples in the shortest PRBS step. the
+highest frequency point in the Bode plot will be <span class="math notranslate nohighlight">\(F_s / (2 \times\)</span> <code class="docutils literal notranslate"><span class="pre">period_iters</span></code><span class="math notranslate nohighlight">\()\)</span></p>
+<p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">Regulation Mode</span></a> is <code class="docutils literal notranslate"><span class="pre">V</span></code>, <span class="math notranslate nohighlight">\(F_s = (\text{FGC.ITER_PERIOD})^{-1}\)</span>.</p>
+<p>If <a class="reference internal" href="#reg-mode-ident"><span class="std std-ref">Regulation Mode</span></a> is <code class="docutils literal notranslate"><span class="pre">I/B</span></code>, <span class="math notranslate nohighlight">\(F_s\)</span> is given in <a class="reference internal" href="ui_params_obcd.html#equation-fs">(8)</a>.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>1</p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>1</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\([1, 10]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="amplitude-pp"><strong>Peak-to-Peak Amplitude:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">amplitude_pp</span></code></p>
+<p>The peak-to-peak amplitude of the PRBS step.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>1</p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Application dependent. The user should abide by the limits set within the FGC:
+<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyLIMITS.htm#LIMITS.V.POS">LIMITS.V.POS</a> /
+<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyLIMITS.htm#LIMITS.V.NEG">LIMITS.V.NEG</a> ,
+<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyLIMITS.htm#LIMITS.I.POS">LIMITS.I.POS</a> /
+<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyLIMITS.htm#LIMITS.I.NEG">LIMITS.I.NEG</a> ,
+<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyLIMITS.htm#LIMITS.B.POS">LIMITS.B.POS</a> /
+<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyLIMITS.htm#LIMITS.B.NEG">LIMITS.B.NEG</a> .</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\((0, 10^6]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="num-sequences"><strong>Num. of Sequences:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">num_sequences</span></code></p>
+<p>The number of PRBS periods. One PRBS period has a length of
+<span class="math notranslate nohighlight">\(2^{\text{k_order}} - 1\)</span>.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>15</p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Application dependent. The value should be selected such that the drift
+is elimiated several periods before the end of the PRBS sequence. In general,
+any value between 10 and 20 should suffice.</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\([6, 50]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+<p id="k-order"><strong>K order:</strong></p>
+<blockquote>
+<div><dl class="field-list">
+<dt class="field-odd">keyword</dt>
+<dd class="field-odd"><p><code class="code docutils literal notranslate"><span class="pre">k_order</span></code></p>
+<p>Indicates the size of a unique word of data in the a PRBS sequence.</p>
+</dd>
+<dt class="field-even">Type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Default</dt>
+<dd class="field-odd"><p>12</p>
+</dd>
+<dt class="field-even">Recommended</dt>
+<dd class="field-even"><p>Application dependent. The larger the value, the better the resolution
+at lower frequencies. However, a larger value will require more PRBS samples
+(and thus more memory).</p>
+</dd>
+<dt class="field-odd">Feasible values</dt>
+<dd class="field-odd"><p><span class="math notranslate nohighlight">\([8, 20]\)</span></p>
+</dd>
+</dl>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api_ref.html" class="btn btn-neutral float-right" title="API Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="ui_params_obcd.html" class="btn btn-neutral float-left" title="UI Parameters (ObCD)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,76 @@
+Sensitivity functions
+=====================
+
+As described in the RST and voltage loop synthesis (see :ref:`RST and ILC design for I/B-Loop`
+and :ref:`Controller design for V-Loop`), one of the output arguments from the optimization
+algorithm is ``df_sens``; for current and field control, this variable is a list where each index of the list contains
+multiple sensitivity functions (in a dataframe format). The gain [dB] and phase [deg] are given for each
+sensitivity function. The example below shows the sensitivity function columns names for current and field
+control.
+
+
+  .. code-block:: python
+
+    >>> df_sens[0].columns
+    MultiIndex([(        'Sensitivity_r_y',  'gain'),
+                (        'Sensitivity_r_y', 'phase'),
+                (       'Sensitivity_dy_y',  'gain'),
+                (       'Sensitivity_dy_y', 'phase'),
+                (       'Sensitivity_dv_y',  'gain'),
+                (       'Sensitivity_dv_y', 'phase'),
+                (        'Sensitivity_n_y',  'gain'),
+                (        'Sensitivity_n_y', 'phase'),
+                (        'Sensitivity_r_u',  'gain'),
+                (        'Sensitivity_r_u', 'phase'),
+                ('Sensitivity_r_y_DESIRED',  'gain'),
+                ('Sensitivity_r_y_DESIRED', 'phase')],
+               )
+
+These sensitivity functions correspond to the functions used in :ref:`Current/Field Control`.
+
+.. math::
+
+   \begin{aligned}
+   \mathcal{S}_{ry} & \Rightarrow  \texttt{Sensitivity_r_y} \\
+   \mathcal{S}_{ry}^d & \Rightarrow  \texttt{Sensitivity_r_y_DESIRED} \\
+   \mathcal{S}_{rv_r} & \Rightarrow  \texttt{Sensitivity_r_u} \\
+   \mathcal{S}_{d_yy} & \Rightarrow  \texttt{Sensitivity_dy_y} \\
+   \mathcal{S}_{d_vy} & \Rightarrow  \texttt{Sensitivity_dv_y} \\
+   \mathcal{S}_{n_yy} & \Rightarrow  \texttt{Sensitivity_n_y}
+   \end{aligned}
+
+
+
+For voltage control, the output variable ``df_sens`` is simply a dataframe.
+
+  .. code-block:: python
+
+    >>> df_sens.columns
+        MultiIndex([(        'Sensitivity_r_y_damping',  'gain'),
+                    (        'Sensitivity_r_y_damping', 'phase'),
+                    (        'Sensitivity_r_y_voltage',  'gain'),
+                    (        'Sensitivity_r_y_voltage', 'phase'),
+                    (          'Sensitivity_dy_y_damp',  'gain'),
+                    (          'Sensitivity_dy_y_damp', 'phase'),
+                    (          'Sensitivity_dy_y_volt',  'gain'),
+                    (          'Sensitivity_dy_y_volt', 'phase'),
+                    ('Sensitivity_r_y_damping_DESIRED',  'gain'),
+                    ('Sensitivity_r_y_damping_DESIRED', 'phase'),
+                    ('Sensitivity_r_y_voltage_DESIRED',  'gain'),
+                    ('Sensitivity_r_y_voltage_DESIRED', 'phase')],
+                   )
+
+
+These sensitivity functions correspond to the functions used in :ref:`Voltage Control`.
+
+.. math::
+
+   \begin{aligned}
+   \mathcal{S}_{v_dv_0} & \Rightarrow  \texttt{Sensitivity_r_y_damping} \\
+   \mathcal{S}_{v_dv_0}^d & \Rightarrow  \texttt{Sensitivity_r_y_damping_DESIRED} \\
+   \mathcal{S}_{v_rv_0} & \Rightarrow  \texttt{Sensitivity_r_y_voltage} \\
+   \mathcal{S}_{v_rv_0}^d & \Rightarrow  \texttt{Sensitivity_r_y_voltage_DESIRED} \\
+   \mathcal{S}_{d_{v_0}v_0} \text{(with voltage loop open)} & \Rightarrow  \texttt{Sensitivity_dy_y_damp} \\
+   \mathcal{S}_{d_{v_0}v_0} \text{(with voltage loop closed)} & \Rightarrow  \texttt{Sensitivity_dy_y_volt}
+   \end{aligned}
+

@@ -1,0 +1,821 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Current/Field Control &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Voltage Control" href="voltage.html" />
+    <link rel="prev" title="Tutorial" href="main.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="main.html">Tutorial</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="main.html#obcd">ObCD</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Current/Field Control</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rst-synthesis">RST Synthesis</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ilc-synthesis">ILC Synthesis</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="voltage.html">Voltage Control</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="main.html#frm">FRM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_doc/main.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/main.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="main.html">Tutorial</a> &raquo;</li>
+        
+      <li>Current/Field Control</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorial/current_field.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="current-field-control">
+<h1>Current/Field Control<a class="headerlink" href="#current-field-control" title="Permalink to this headline">¶</a></h1>
+<p>The FGC can implement two types of control methods for the current and
+field loops. One is the standard RST controller which is used for
+general (non-repetitive) cycles. Some of the theory behind the RST
+synthesis for power converters has already been addressed. It is thus
+recommended that the user consults <a class="reference external" href="https://edms.cern.ch/document/2001105/1">this
+document</a> before continuing
+to read any further (as the theory presented here will be a brief
+extension of that content).</p>
+<p>The second type of control method used is Iterative Learning Control
+(ILC). This method can only be run when the FGC is in cycling mode. This
+is because ILC requires repetitive cycles to “learn” the required
+reference signal in order to produce zero error between the output and
+the desired output. More information on the ILC methodology can be found
+<a class="reference external" href="http://dx.doi.org/10.1049/iet-cta.2018.6446">here</a>; information on
+the architecture of ILC within the FGC can be found
+<a class="reference external" href="https://wikis.cern.ch/pages/viewpage.action?pageId=148734841">here</a>.
+Note that to run ILC, a stabilizing RST controller needs to be set in
+the device.</p>
+<p>PyFresco synthesizes both the RST and ILC filters for a particular loop.
+Both of these control methods are discussed in detail below.</p>
+<p>For the remaining portions of this documentation, the notation
+<span class="math notranslate nohighlight">\(\mathcal{S}_{xy}\)</span> will be used to represent the sensitivity
+function from a signal <span class="math notranslate nohighlight">\(x\)</span> to a signal <span class="math notranslate nohighlight">\(y\)</span>. For all
+controller designs within the FGC, the <em>desired</em> closed-loop transfer
+function (technically the <em>complementary sensitivity function</em>) is
+selected as a (delayed) standard second-order system:</p>
+<div class="math notranslate nohighlight">
+\[\label{eq:2nd_order}
+\mathcal{S}_{ry}^d(s) = \frac{\omega_{d}^2}{s^2 + 2\zeta \omega_{d} s + \omega_{d}^2} e^{-sd_r},\]</div>
+<p>where <span class="math notranslate nohighlight">\(r\)</span> is the input reference, <span class="math notranslate nohighlight">\(y\)</span> is the output,
+<span class="math notranslate nohighlight">\(\zeta \:\)</span> is the <em>desired</em> <a class="reference internal" href="../api_doc/ui_params_obcd.html#des-z"><span class="std std-ref">damping factor</span></a>, <span class="math notranslate nohighlight">\(d_r\)</span> is the
+<em>desired</em> <a class="reference internal" href="../api_doc/ui_params_obcd.html#ref-delay"><span class="std std-ref">reference delay</span></a> and</p>
+<div class="math notranslate nohighlight">
+\[\omega_d = 2 \pi f_d \left[ 1-2\zeta^2 + \sqrt{2-4\zeta^2 + 4\zeta^4} \right]^{-0.5},\]</div>
+<p>where <span class="math notranslate nohighlight">\(f_{d}\)</span> [Hz] is the <em>desired</em> closed-loop <a class="reference internal" href="../api_doc/ui_params_obcd.html#des-bw"><span class="std std-ref">bandwidth</span></a> of the
+system. Note that <span class="math notranslate nohighlight">\(r\)</span> or <span class="math notranslate nohighlight">\(y\)</span> can be either the current or field (depending
+on the loop the user wants to regulate).</p>
+<div class="section" id="rst-synthesis">
+<h2>RST Synthesis<a class="headerlink" href="#rst-synthesis" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-default" id="id3">
+<span id="rst"></span><img alt="RST controller structure" src="../_images/rst_block.png" />
+<p class="caption"><span class="caption-number">Fig. 1 </span><span class="caption-text">RST controller structure for the current and field loop. The voltage
+disturbance <span class="math notranslate nohighlight">\(d_{v}\)</span> is depicted here at the input of the
+voltage source; this is done on purpose for uniformity in the case of
+data driven design where only the series <span class="math notranslate nohighlight">\(V(s)M(s)\)</span> can be
+measured. This assumption has no relevant consequences though as
+<span class="math notranslate nohighlight">\(V(s)\)</span> is assumed to have unity gain and <span class="math notranslate nohighlight">\(M(s)\)</span> is
+assumed to be always slower than <span class="math notranslate nohighlight">\(V(s)\)</span>.</span><a class="headerlink" href="#id3" title="Permalink to this image">¶</a></p>
+</div>
+<p><a class="reference internal" href="#rst"><span class="std std-numref">Fig. 1</span></a> shows the general power converter control system
+configuration. In a model-driven setting, the <a class="reference external" href="https://edms.cern.ch/document/2001105/1">voltage source and
+magnet</a> dynamics
+<span class="math notranslate nohighlight">\(V(s)\)</span> and <span class="math notranslate nohighlight">\(M(s)\)</span> (along with the other components) are
+approximated by using the FGC property values. In a data-driven setting,
+the open-loop dynamics can be measured using the FRM tool (see XXX for
+more information). Let us denote <span class="math notranslate nohighlight">\(G(s)\)</span> as the system
+corresponding to the open-loop dynamics (DAC/SPI, voltage source,
+magnet, and feedback elements), and <span class="math notranslate nohighlight">\(G_{f}(s)\)</span> as the system
+corresponding to the dynamics in the forward path (DAC/SPI, voltage
+source and magnet). Note that <span class="math notranslate nohighlight">\(G(s)\)</span> includes the <a class="reference external" href="https://edms.cern.ch/document/2001105/1">moving average
+filter</a> dynamics given by
+the FGC property
+<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyMEAS.htm#MEAS.I.FIR_LENGTHS">MEAS.I/B.FIR_LENGTHS</a>.</p>
+<p>The <a class="reference external" href="https://doi.org/10.1109/TCST.2017.2783346">RST controller</a> is a
+2-degree-of-freedom controller which can be used to synthesize the
+tracking and regulation requirements independently from each other. Each
+controller is realized as a polynomial function as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+R(z^{-1},\rho) &amp;= r_0 + r_1z^{-1} + \cdots + r_{n_r}z^{-n_r} \\
+S(z^{-1},\rho) &amp;= 1 + s_1z^{-1} + \cdots + s_{n_s}z^{-n_s} \\
+T(z^{-1},\rho) &amp;= t_0 + t_1z^{-1} + \cdots + t_{n_t}z^{-n_t},
+\end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\{n_r,n_s,n_t\}\)</span> [<a class="reference internal" href="../api_doc/ui_params_obcd.html#n-r"><span class="std std-ref">n_r</span></a>, <a class="reference internal" href="../api_doc/ui_params_obcd.html#n-s"><span class="std std-ref">n_s</span></a>, <a class="reference internal" href="../api_doc/ui_params_obcd.html#n-t"><span class="std std-ref">n_t</span></a>] are
+the orders of the polynomials <span class="math notranslate nohighlight">\(R,S\)</span> and <span class="math notranslate nohighlight">\(T\)</span>, respectively.
+For notation purposes, the <span class="math notranslate nohighlight">\(z^{-1}\)</span> term will only be reiterated
+when deemed necessary. The controller parameter vector
+<span class="math notranslate nohighlight">\(\rho \in \mathbb{R}^{n_{rst}}\)</span> (vector of decision variables) is
+defined as</p>
+<div class="math notranslate nohighlight">
+\[\rho^\top=[r_0,r_1,\ldots,r_{n_r},s_1,s_2,\ldots,s_{n_s},t_0,t_1,\ldots,t_{n_t}].\]</div>
+<p>With PyFresco, <span class="math notranslate nohighlight">\(\rho\)</span> can be obtained by minimizing either the
+<span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span>, <span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> and
+<span class="math notranslate nohighlight">\(\mathcal{H}_1\)</span> criterion. The methodology behind these criteria
+is outlined below.</p>
+<div class="section" id="initial-stabilizing-controller">
+<h3>Initial stabilizing controller<a class="headerlink" href="#initial-stabilizing-controller" title="Permalink to this headline">¶</a></h3>
+<p>To successfully design a stabilizing low-order RST controller, the
+<a class="reference external" href="https://doi.org/10.1016/j.conengprac.2018.10.007">design
+methodology</a>
+requires an initial stabilizing controller <span class="math notranslate nohighlight">\(R(\rho_0)\)</span> and
+<span class="math notranslate nohighlight">\(S(\rho_0)\)</span> (where the index <span class="math notranslate nohighlight">\(i\)</span> denotes initial). In
+general, the performance of this initial controller need not be close to
+the performance of the final controller; however, experimentation shows
+that a better initial controller will reduce the overall optimization
+time of the algorithm. For the CERN power converter control system,
+there are several constraints that are imposed to improve the controller
+performance and system robustness; the following
+<span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> minimization problem can be considered to
+produce the initial controller:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+    &amp; \underset{ \rho_0}{\text{minimize}}
+    &amp; &amp; \|W[1-\mathcal{S}_{ry}(\rho_0)] \|_\infty  \\
+    &amp; \text{subject to:} &amp; &amp; \| \Delta M_{ib} \mathcal{S}_{d_y y}(\rho_0) \|_\infty &lt; 1  \\
+    &amp; &amp; &amp; \|A_k^{-1} \mathcal{S}_{d_v y}^{k}(\rho_0) \|_\infty &lt; 1 \\
+    &amp; &amp; &amp; \Re\{S(\rho_0) \} &gt; 0 \\
+    &amp; &amp; &amp; \forall \omega \in \Omega, \ k = \{1,2,\ldots, a\}
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(W = (1-\mathcal{S}_{ry}^d)^{-1}\)</span> and
+<span class="math notranslate nohighlight">\(\Omega := [0,\pi/T_s]\)</span>. The first constraint
+ensures that the desired <a class="reference internal" href="../api_doc/ui_params_obcd.html#des-mm"><span class="std std-ref">modulus margin</span></a> is obtained (where
+<span class="math notranslate nohighlight">\(\Delta M_{ib}\)</span> is the modulus margin). The second constraint ensures
+that the desired <a class="reference internal" href="../api_doc/ui_params_obcd.html#noise-rej"><span class="std std-ref">noise attenuation</span></a>
+of <span class="math notranslate nohighlight">\(A_k\)</span> [-] on <span class="math notranslate nohighlight">\(|\mathcal{S}_{d_v y}^k|\)</span> is obtained; the subscript <span class="math notranslate nohighlight">\(k\)</span>
+denotes the k-th index of a frequency vector. The third
+constraint ensures the stability of the open-loop
+controller. Note that <span class="math notranslate nohighlight">\(S(\rho_0)\)</span> contains <span class="math notranslate nohighlight">\(n_I\)</span>
+[<a class="reference internal" href="../api_doc/ui_params_obcd.html#n-integrators"><span class="std std-ref">n_integrators</span></a>] integrators that can
+be set by the user. As it stands, this problem is non-convex and the
+solution does not guarantee the stability of the initial controller.
+However, <a class="reference external" href="https://doi.org/10.1109/TCST.2017.2783346">this problem can be
+convexified</a> as follows:</p>
+<div class="math notranslate nohighlight" id="equation-opt-init">
+<span class="eqno">(1)<a class="headerlink" href="#equation-opt-init" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+    &amp; \underset{ \gamma, \rho_0}{\text{minimize}}
+    &amp; &amp; \gamma  \\
+    &amp; \text{subject to:} &amp; &amp; \gamma^{-1} \left| W [\psi(\rho_0) - G_f T(\rho_0)] \right|&lt; \Re\{\psi(\rho_0) \}  \\
+    &amp; &amp; &amp; \left| \Delta M_{ib} S(\rho_0) \right| &lt; \Re\{\psi(\rho_0) \}  \\
+    &amp; &amp; &amp; \left| A_k^{-1} G_f^k S^k(\rho_0) \right| &lt; \Re\{\psi^k(\rho_0) \}  \\
+    &amp; &amp; &amp; \Re\{S(\rho_0) \} &gt; 0 \\
+    &amp; &amp; &amp; \forall \omega \in \Omega, \ k = \{1,2,\ldots, a\}
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\psi(\rho_0) = GR(\rho_0) + S(\rho_0)\)</span>. The classical
+solution to this problem is to implement a bisection algorithm in order
+to obtain the global solution.</p>
+<ul class="simple">
+<li><p>For a model-driven design, the optimization problem is solved in a
+semi-definite programming (SDP) approach where a frequency array of
+finite values is defined <em>a-priori</em>. PyFresco contains an algorithm that
+automatically calculates this array.</p></li>
+<li><p>For a data-driven design, the same SDP approach is taken. However,
+the frequency array does not need to be arbitrarily constructed (as
+in the model-driven design) since the frequency values from the FRM
+experiments are already available with the corresponding gain and
+phase values.</p></li>
+</ul>
+<p>A feasible solution to <a class="reference internal" href="#equation-opt-init">(1)</a> ensures the stability of the closed-loop
+system, and thus produces stabilizing (initial) controllers. With PyFresco,
+the initial order for all RST polynomials are selected as
+<span class="math notranslate nohighlight">\(n_r=n_s=n_t=5\)</span>. If the problem is infeasible for this order, then
+the PyFresco algorithm will increase the order until feasibility is
+achieved.</p>
+<p>Note that if <span class="math notranslate nohighlight">\(d_r\)</span> is set too large (greater than the open-loop
+delay), the <span class="math notranslate nohighlight">\(T(z^{-1})\)</span> polynomial may contain unstable zeros
+(which is not desired since the FGC control loop implements
+back-calculations needed for anti wind-up control). If this instability
+in <span class="math notranslate nohighlight">\(T(z^{-1})\)</span> occurs, PyFresco will re-optimize and add the
+constraint <span class="math notranslate nohighlight">\(\Re\{T(\rho_0)\} &gt; 0\)</span> to the optimization problem (and
+to the <span class="math notranslate nohighlight">\(\mathcal{H}_\infty, \mathcal{H}_2\)</span> and
+<span class="math notranslate nohighlight">\(\mathcal{H}_1\)</span> optimization problems discussed below); this
+constraint is a sufficient condition to ensure that the zeros of
+<span class="math notranslate nohighlight">\(T(z^{-1})\)</span> remain inside the unit circle. Note that this
+additional constraint may impact the final performance of the
+controller. It is thus recommended to modify <span class="math notranslate nohighlight">\(d_r\)</span> only if the
+open-loop delay of the system is (approximately) known.</p>
+<p>In summary, here is the basic PyFresco RST synthesis methodology:</p>
+<ul class="simple">
+<li><p>Implement the <a class="reference external" href="https://doi.org/10.1109/TCST.2017.2783346">stabilizing
+method</a> to design a
+large order controller (where no initialization is needed and the
+controllers are stabilizing). The optimization constraints will
+automatically be modified based on the solutions obtained.</p></li>
+<li><p>Use the controller in the previous step as the initialization for the
+<a class="reference external" href="https://doi.org/10.1016/j.conengprac.2018.10.007">low-order optimization
+problem</a> (which
+ensures the closed-loop stability and performance for low-order
+controllers).</p></li>
+</ul>
+<p>The second step to this problem is now addressed below. It is now
+assumed that the initial stabilizing polynomials <span class="math notranslate nohighlight">\(R(\rho_0)\)</span> and
+<span class="math notranslate nohighlight">\(S(\rho_0)\)</span> are available.</p>
+</div>
+<div class="section" id="mathcal-h-infty-control">
+<span id="rst-hinf-control"></span><h3><span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> control<a class="headerlink" href="#mathcal-h-infty-control" title="Permalink to this headline">¶</a></h3>
+<p>[<a class="reference internal" href="../api_doc/ui_params_obcd.html#opt-method"><span class="std std-ref">opt_method</span></a>]</p>
+<p>In the <span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> sense, the objective is to minimize
+<span class="math notranslate nohighlight">\(\|W(1 - \mathcal{S}_{ry}(\rho)) \|_\infty\)</span>; an equivalent
+representation of this objective is to minimize <span class="math notranslate nohighlight">\(\gamma\)</span> such that
+<span class="math notranslate nohighlight">\(\|W(1 - \mathcal{S}_{ry})  \|_\infty^2 &lt; \gamma\)</span> (which is the
+epigraph form of the minimization criterion). This criterion is
+satisfied if the following optimization problem is considered:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+        &amp; \underset{ \rho,\gamma}{\text{minimize}}
+        &amp; &amp; \gamma  \\
+        &amp; \text{subject to:} &amp; &amp; \left[W(1-\mathcal{S}_{ry}(\rho)) \right]^{\star} \left[W(1-\mathcal{S}_{ry}(\rho)) \right] &lt; \gamma \\
+        &amp; &amp; &amp;\forall \omega \in \Omega
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\((\cdot)^\star\)</span> denotes the complex conjugate of the
+argument. The constraint in the above optimization problem can be
+expressed as</p>
+<div class="math notranslate nohighlight">
+\[\left[W(\psi(\rho)-G_{f} T(\rho)) \right]^{\star} \gamma^{-1} \left[W(\psi(\rho)-G_{f} T(\rho)) \right] - \psi^{\star}(\rho)\psi(\rho)&lt;0.\]</div>
+<p>where <span class="math notranslate nohighlight">\(\psi(\rho) = GR(\rho) + S(\rho)\)</span>. This constraint is
+convex-concave (due to the <span class="math notranslate nohighlight">\(- \psi^{\star}(\rho)\psi(\rho)\)</span> term).
+To convexify this constraint, the term
+<span class="math notranslate nohighlight">\(\psi^{\star}(\rho)\psi(\rho)\)</span> can be linearized around an initial
+controller parameter vector <span class="math notranslate nohighlight">\(\rho_0\)</span>. With the Shur Complement
+Lemma, the optimization problem can be transformed to a <a class="reference external" href="https://doi.org/10.1016/j.conengprac.2018.10.007">linear matrix
+inequality</a> (LMI).
+However, large LMI’s are not solved efficiently with Python. Thus the
+optimization constraint is left in its linear form; the final
+optimization problem to solve (with the additional modulus margin and
+controller stability constraint) can be expressed as follows:</p>
+<div class="math notranslate nohighlight" id="equation-opt-hinf">
+<span class="eqno">(2)<a class="headerlink" href="#equation-opt-hinf" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+        &amp; \underset{ \rho,\gamma}{\text{minimize}}
+        &amp; &amp; \gamma  \\
+        &amp; \text{subject to:} &amp; &amp; \gamma^{-1} \left|W(\psi(\rho)-G_fT(\rho)) \right|^2   &lt; 2\Re \left\{\psi(\rho) \psi^{\star}(\rho_0) \right\} - \left|\psi(\rho_0) \right|^2 \\
+        &amp; &amp; &amp;
+        \left| \Delta M_{ib} S(\rho) \right|^2   &lt; 2\Re \left\{\psi(\rho) \psi^{\star}(\rho_0) \right\} - \left|\psi(\rho_0) \right|^2 \\
+        &amp; &amp; &amp;
+        \left| A_k^{-1} G_f^k S^k(\rho) \right|^2   &lt; 2\Re \left\{\psi^k(\rho) \psi^{\star,k}(\rho_0) \right\} - \left|\psi^k(\rho_0) \right|^2 \\
+        &amp; &amp; &amp; \Re\{S(\rho) \} &gt; 0 \\
+        &amp; &amp; &amp;\forall \omega \in \Omega, \ k = \{1,2,\ldots, a\}
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\psi(\rho_0) = GR(\rho_0) + S(\rho_0)\)</span>. <em>For a stabilizing
+RST controller</em>, <span class="math notranslate nohighlight">\(R(\rho_0)\)</span> <em>and</em> <span class="math notranslate nohighlight">\(S(\rho_0)\)</span> <em>must be
+stabilizing</em>. For a fixed <span class="math notranslate nohighlight">\(\gamma\)</span>, this optimization problem is
+convex. Thus the optimal solution can be obtained by performing a
+bisection algorithm <a class="footnote-reference brackets" href="#id2" id="id1">1</a> over <span class="math notranslate nohighlight">\(\gamma\)</span>. This optimal solution,
+however, is the solution for one iteration of a given
+<span class="math notranslate nohighlight">\(\psi(\rho_0)\)</span>. The converged true local solution can be obtained
+by solving the above optimization problem and replace
+<span class="math notranslate nohighlight">\(\psi(\rho_0)\)</span> with the solution of the previous problem. The
+final solution is then obtained within a given tolerance level of
+<span class="math notranslate nohighlight">\(\gamma\)</span>.</p>
+<p>Here is a basic summary of the optimization process for
+<span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> performance:</p>
+<ul class="simple">
+<li><p>Obtain an initial stabilizing controller <span class="math notranslate nohighlight">\(R(\rho_0)\)</span> and
+<span class="math notranslate nohighlight">\(S(\rho_0)\)</span> from the convex optimization problem in <a class="reference internal" href="#equation-opt-init">(1)</a>.</p></li>
+<li><p>Use this solution as the initializing controller in
+<span class="math notranslate nohighlight">\(\psi(\rho_0)\)</span> (i.e.,
+<span class="math notranslate nohighlight">\(\psi(\rho_0) = GR(\rho_0) + S(\rho_0)\)</span>).</p></li>
+<li><p>Solve the optimization problem in <a class="reference internal" href="#equation-opt-hinf">(2)</a> using a bisection algorithm.
+Use the solution as the new <span class="math notranslate nohighlight">\(\psi(\rho_0)\)</span>.</p></li>
+<li><p>Repeat the above step until convergence is achieved with respect to
+<span class="math notranslate nohighlight">\(\gamma\)</span>.</p></li>
+</ul>
+</div>
+<div class="section" id="mathcal-h-2-control">
+<h3><span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> control<a class="headerlink" href="#mathcal-h-2-control" title="Permalink to this headline">¶</a></h3>
+<p>[<a class="reference internal" href="../api_doc/ui_params_obcd.html#opt-method"><span class="std std-ref">opt_method</span></a>]</p>
+<p>A similar linearization process can be used to obtain
+<span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> performance. An optimization problem can be
+formulated for minimizing the square of the <span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span>
+model-reference objective (i.e., minimizing
+<span class="math notranslate nohighlight">\(\|W_2(\mathcal{S}_{ry}(\rho) - \mathcal{S}_{ry}^d) \|_2^2\)</span>); the
+optimization problem for this criteria can be expressed as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+        &amp; \underset{ \rho, \gamma,\Gamma}{\text{minimize}} &amp; &amp; \gamma=\int_{-\pi / {T_s}}^{\pi / {T_s}} \Gamma(\omega) d\omega  \\
+        &amp; \text{subject to:} &amp; &amp; \left[W_2(\mathcal{S}_{ry}(\rho) - \mathcal{S}_{ry}^d)\right]^{\star} \left[W_2(\mathcal{S}_{ry}(\rho) - \mathcal{S}_{ry}^d) \right] &lt; \Gamma(\omega) \\
+        &amp; &amp; &amp;\forall \omega \in \Omega
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Gamma(\omega) \in \mathbb{R}_+\)</span> is an unknown function of
+<span class="math notranslate nohighlight">\(\omega\)</span> and <span class="math notranslate nohighlight">\(W_2 = 2 \pi \cdot\)</span> <a class="reference internal" href="../api_doc/ui_params_obcd.html#des-bw"><span class="std std-ref">des_bw</span></a>
+<span class="math notranslate nohighlight">\(\cdot s^{-1}\)</span>. By using the Shur
+complement lemma, the above problem can be transformed into an LMI. Note
+that in contrast to the <span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> problem above, we
+cannot leave this problem in linear form and solve it with a bisection
+algorithm because <span class="math notranslate nohighlight">\(\gamma\)</span> here is a variable function, not simply
+a constant. Thus we are forced to use the LMI method to solve the
+problem. With the added modulus margin and controller stability
+constraint, the <span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> optimization problem to solve is
+given as follows:</p>
+<div class="math notranslate nohighlight" id="equation-opt-h2">
+<span class="eqno">(3)<a class="headerlink" href="#equation-opt-h2" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+    &amp; \underset{ \rho, \gamma, \Gamma}{\text{minimize}} &amp; &amp;  \gamma=\int_{-\pi / {T_s}}^{\pi / {T_s}} \Gamma(\omega) d\omega  \\
+    &amp; \text{subject to:}
+    &amp; &amp;
+    \begin{bmatrix}
+    \psi^{\star}(\rho)\psi_0 + \psi_0^{\star}\psi(\rho) - \psi_0^{\star}\psi_0 &amp; \phantom{xx} \left[W_2(G_fT(\rho) - \psi(\rho)\mathcal{S}_{ry}^d) \right]^{\star} \\
+    W_2(G_fT(\rho) - \psi(\rho)\mathcal{S}_{ry}^d) &amp; \phantom{xx} \Gamma (\omega)
+    \end{bmatrix} \succ 0  \\
+    &amp; &amp; &amp;
+    \begin{bmatrix}
+    \psi^{\star}(\rho)\psi_0 + \psi_0^{\star}\psi(\rho) - \psi_0^{\star}\psi_0 &amp; \phantom{xx} \left[\Delta M_{ib}S(\rho) \right]^{\star} \\
+    \Delta M_{ib}S(\rho) &amp; \phantom{xx} 1
+    \end{bmatrix} \succ 0  \\
+    &amp; &amp; &amp;
+    \left| A_k^{-1} G_f^k S^k(\rho) \right|^2   &lt; 2\Re \left\{\psi^k(\rho) \psi^{\star,k}(\rho_0) \right\} - \left|\psi^k(\rho_0) \right|^2 \\
+    &amp; &amp; &amp; \Re\{S(\rho)\} &gt; 0 \\
+    &amp; &amp; &amp; \forall \omega \in \Omega, \ k = \{1,2,\ldots,a \}
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\psi_0 = \psi(\rho_0)\)</span>. With PyFresco, the constraints are
+evaluated at a finite number of frequencies (i.e.,
+<span class="math notranslate nohighlight">\(\omega \in \Omega_\eta=\{ \omega_1,\ldots,\omega_\eta \}\)</span>), thus
+<span class="math notranslate nohighlight">\(\Gamma(\omega)\)</span> can be replaced by an optimization variable
+<span class="math notranslate nohighlight">\(\Gamma_k\)</span> at each frequency <span class="math notranslate nohighlight">\(\omega_k\)</span> for
+<span class="math notranslate nohighlight">\(k=1,\ldots,\eta\)</span>. To better approximate the integral function,
+a trapezoidal approximation of the objective function is used, i.e.,
+<span class="math notranslate nohighlight">\(\gamma \approx \sum_{k=1}^{\eta} \left(\frac{\Gamma_{k} + \Gamma_{k+1}}{2}\right)(\omega_{k+1} - \omega_{k})\)</span>.</p>
+<p>Here is a basic summary of the optimization process for
+<span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> performance:</p>
+<ul class="simple">
+<li><p>Obtain an initial stabilizing controller <span class="math notranslate nohighlight">\(R(\rho_0)\)</span> and
+<span class="math notranslate nohighlight">\(S(\rho_0)\)</span> from the convex optimization problem in <a class="reference internal" href="#equation-opt-init">(1)</a>.</p></li>
+<li><p>Use this solution as the initializing controller in
+<span class="math notranslate nohighlight">\(\psi(\rho_0)\)</span> (i.e.,
+<span class="math notranslate nohighlight">\(\psi(\rho_0) = GR(\rho_0) + S(\rho_0)\)</span>).</p></li>
+<li><p>Solve the optimization problem in <a class="reference internal" href="#equation-opt-h2">(3)</a>. Use the solution as the new
+<span class="math notranslate nohighlight">\(\psi(\rho_0)\)</span>.</p></li>
+<li><p>Repeat the above step until convergence (within a fixed tolerance) is
+achieved with respect to <span class="math notranslate nohighlight">\(\gamma\)</span>.</p></li>
+</ul>
+</div>
+<div class="section" id="mathcal-h-1-control">
+<h3><span class="math notranslate nohighlight">\(\mathcal{H}_1\)</span> control<a class="headerlink" href="#mathcal-h-1-control" title="Permalink to this headline">¶</a></h3>
+<p>[<a class="reference internal" href="../api_doc/ui_params_obcd.html#opt-method"><span class="std std-ref">opt_method</span></a>]</p>
+<p>In some applications, minimizing the <span class="math notranslate nohighlight">\(\mathcal{H}_1\)</span> norm of the
+model-reference objective may be desired. This is because for a given
+bounded discrete-time signal <span class="math notranslate nohighlight">\(x[k]\)</span>, and its frequency response
+<span class="math notranslate nohighlight">\(X(e^{j\omega T_s})\)</span>, the relationship between <span class="math notranslate nohighlight">\(\| X \|_1\)</span>
+and <span class="math notranslate nohighlight">\(\| x \|_\infty\)</span> is given as
+<span class="math notranslate nohighlight">\(\|x \|_\infty \leq \| X\|_1\)</span>. Therefore, if one is interested in
+minimizing the peak error between the output and desired output (i.e.,
+minimize <span class="math notranslate nohighlight">\(\| y[k] - y_d[k]\|_\infty\)</span>) in the time-domain, then
+minimizing
+<span class="math notranslate nohighlight">\(\|W_2(\mathcal{S}_{ry}(\rho) - \mathcal{S}_{ry}^d) \|_1\)</span> can be
+considered.</p>
+<p>Unlike the <span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> and <span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span>
+algorithms, the <span class="math notranslate nohighlight">\(\mathcal{H}_1\)</span> minimization problem is handled in
+two steps. This is because the <span class="math notranslate nohighlight">\(\mathcal{H}_1\)</span> problem cannot
+easily be linearized to obtain convex constraints. In the first step, a
+simple feasibility problem is solved to stabilize the closed-loop
+system, stabilize the open-loop controller, and obtain a desired modulus
+margin:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+&amp; \text{find}
+&amp; &amp; \rho  \\
+&amp; \text{subject to:} &amp; &amp; \left| \Delta M_{ib} S(\rho) \right|&lt;\Re \left\{ \psi(\rho) \right\} \\
+&amp; &amp; &amp; \left| A_k^{-1} G_f^k S^k(\rho) \right| &lt; \Re\{\psi^k(\rho) \}  \\
+&amp; &amp; &amp; \Re\{S(\rho) \} &gt; 0 \\
+&amp; &amp; &amp; \forall \omega \in \Omega, \ k = \{1,2,\ldots,a \}
+\end{aligned}\end{split}\]</div>
+<p>Note that a feasible solution to this problem generates
+<span class="math notranslate nohighlight">\(R(\rho^*)\)</span> and <span class="math notranslate nohighlight">\(S(\rho^*)\)</span> (i.e., there is no <span class="math notranslate nohighlight">\(T\)</span>
+polynomial to optimize in the above problem). The remaining polynomial
+to compute is <span class="math notranslate nohighlight">\(T(\rho)\)</span> in order to obtain the desired tracking
+preformance; this polynomial is computed by solving the following
+optimization problem:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+        &amp; \underset{ \rho}{\text{minimize}} &amp; &amp; \|W_2(\mathcal{S}_{ry}(\rho) - \mathcal{S}_{ry}^d) \|_1 \\
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(G_fT(\rho)[GR(\rho^*) + S(\rho^*) ]^{-1}\)</span>. Note that the
+<span class="math notranslate nohighlight">\(\mathcal{H}_1\)</span> optimization method does not require an initial
+stabilizing controller to achieve the desired performance. However,
+because the <span class="math notranslate nohighlight">\(R\)</span> and <span class="math notranslate nohighlight">\(S\)</span> polynomials are computed separately
+from <span class="math notranslate nohighlight">\(T\)</span>, a larger <span class="math notranslate nohighlight">\(n_t\)</span> is typically needed to achieve
+satisfactory performance.</p>
+</div>
+<div class="section" id="performance-evaluation">
+<span id="rst-perf-eval"></span><h3>Performance Evaluation<a class="headerlink" href="#performance-evaluation" title="Permalink to this headline">¶</a></h3>
+<p>Once PyFresco completes the RST optimization (for either
+<span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span>, <span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> or
+<span class="math notranslate nohighlight">\(\mathcal{H}_1\)</span> control), the question now remains, how can the
+performance of the controller be evaluated? The optimal solution for
+each optimization method can be used for this purpose; these optimal
+solutions are computed as follows:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> control:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+        \gamma_\infty^*  &amp;=  \sup_{\omega \in \Omega} |X_\infty(e^{-j\omega T_s})| \\
+        X_\infty &amp;= W(1 - \mathcal{S}_{ry}(\rho^*))
+    \end{aligned}\end{split}\]</div>
+</li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> control:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+        \gamma_2^*  &amp;= \sqrt{\frac{T_s}{2\pi} \int_{- \pi/T_s}^{\pi/T_s} \left|X_2(e^{-j\omega T_s}) \right|^2 \: d\omega} \\
+      X_2 &amp;= W_2(\mathcal{S}_{ry}(\rho^*) - \mathcal{S}_{ry}^d)
+    \end{aligned}\end{split}\]</div>
+</li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{H}_1\)</span> control:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+        \gamma_1^*  &amp;= \frac{T_s}{2\pi} \int_{- \pi/T_s}^{\pi/T_s} |X_1(e^{-j\omega T_s})| \: d\omega \\
+        X_1 &amp;= W_2(\mathcal{S}_{ry}(\rho^*) - \mathcal{S}_{ry}^d)
+    \end{aligned}\end{split}\]</div>
+</li>
+</ul>
+<p>PyFresco displays these optimal solutions at the end of each optimization
+session. Note that the displayed optimal solution is an approximation to
+the true solution (since the frequency vector <span class="math notranslate nohighlight">\(\omega\)</span> is discrete
+and finite). <a class="reference internal" href="#performance-index"><span class="std std-numref">Table 1</span></a> shows a table which
+depicts a basic “rule of thumb” for evaluating the RST controller
+performance for each optimization method.</p>
+<span id="performance-index"></span><table class="docutils align-center" id="id4">
+<caption><span class="caption-number">Table 1 </span><span class="caption-text">Performance index “rule of thumb” for different settings in <a class="reference internal" href="../api_doc/ui_params_obcd.html#opt-method"><span class="std std-ref">opt_method</span></a>.</span><a class="headerlink" href="#id4" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 35%" />
+<col style="width: 48%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\mathcal{H}_1 / \mathcal{H}_2\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Good</p></td>
+<td><p><span class="math notranslate nohighlight">\([0,1.3)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\([0,0.15)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Satisfactory</p></td>
+<td><p><span class="math notranslate nohighlight">\([1.3,1.8)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(-\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Bad</p></td>
+<td><p><span class="math notranslate nohighlight">\([1.8,\infty)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\([0.15,\infty)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+<p>Below is a general interpretation of each control method and when to
+implement them:</p>
+<ul class="simple">
+<li><p>Use <span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> control for general
+control demands. The <span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> control method is the
+most common and general optimization criterion. A simple
+interpretation of minimizing the <span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> criterion
+is to minimize <span class="math notranslate nohighlight">\(\gamma\)</span> such that
+<span class="math notranslate nohighlight">\(|E|\gamma^{-1} &lt; |E_d|\)</span> for all <span class="math notranslate nohighlight">\(\omega \in \Omega\)</span>
+(where <span class="math notranslate nohighlight">\(E\)</span> and <span class="math notranslate nohighlight">\(E_d\)</span> are the error and desired error
+transfer functions, respectively). From this condition, it can be
+observed that minimizing the <span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> criterion is
+equivalent to shaping <span class="math notranslate nohighlight">\(|E|\)</span> as close as possible to
+<span class="math notranslate nohighlight">\(|E_d|\)</span> over all frequencies. The solution to this problem
+generally yields satisfactory performance.</p></li>
+<li><p>Use <span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> control when it is desired to minimize the
+average (time-domain) error. This is due to the fact that
+<span class="math notranslate nohighlight">\(\|x[k] \|_2 \propto \|X(e^{-j\omega T_s}) \|_2\)</span> (i.e., from
+Parsavel’s theorem); this implies that minimizing the
+<span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> criterion of the model reference objective in
+<a class="reference internal" href="#equation-opt-h2">(3)</a> is equivalent to minimizing <span class="math notranslate nohighlight">\(\| (r[k] - y[k]) (r[k] - y_d[k])^{-1}\|_2\)</span>,
+(i.e., the weighted average error), where <span class="math notranslate nohighlight">\(r[k], y[k], y_d[k]\)</span> are the time-domain
+reference, output, and desired output signals, respectively.</p></li>
+<li><p>Use <span class="math notranslate nohighlight">\(\mathcal{H}_1\)</span> control when it is desired to minimize the
+peak (time-domain) error. This is due to the fact that
+<span class="math notranslate nohighlight">\(\|x[k] \|_\infty \leq \|X(e^{-j\omega T_s}) \|_1\)</span> (as
+explained in the previous section).</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="ilc-synthesis">
+<h2>ILC Synthesis<a class="headerlink" href="#ilc-synthesis" title="Permalink to this headline">¶</a></h2>
+<div class="figure align-default" id="id5">
+<span id="ilc"></span><img alt="ILC structure" src="../_images/ilc_block.png" />
+<p class="caption"><span class="caption-number">Fig. 2 </span><span class="caption-text">A basic block diagram of the ILC structure used for power converters.</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</div>
+<p>The ILC structure used for the CERN power converters is shown in <a class="reference internal" href="#ilc"><span class="std std-numref">Fig. 2</span></a>.
+ILC seeks to address the tracking problem by implementing a learning
+algorithm where the desired performance is achieved by incorporating
+past error information into the control structure. The control signal
+(or reference signal in the case of closed-loop control) is modified to
+attain a desired specification; with ILC, systems that perform the same
+operations (i.e., repetitive tracking specifications) under the same
+operating conditions are considered. Given a real-valued signal
+<span class="math notranslate nohighlight">\(x(k)\)</span> with a time index <span class="math notranslate nohighlight">\(k\)</span>, the symbol <span class="math notranslate nohighlight">\(q\)</span> will
+denote the forward time-shift operator such that
+<span class="math notranslate nohighlight">\(qx(k) \equiv x(k+1)\)</span>. The output of the closed-loop control
+system can be expressed as follows:</p>
+<div class="math notranslate nohighlight">
+\[y_l(k) = \mathcal{S}_{ry}(q)r_l(k)\]</div>
+<p>where <span class="math notranslate nohighlight">\(l\)</span> is the ILC iteration sequence, <span class="math notranslate nohighlight">\(y_l(k)\)</span> is the
+output, <span class="math notranslate nohighlight">\(y_d(k)\)</span> is the desired output, and <span class="math notranslate nohighlight">\(r_l(k)\)</span> is the
+reference signal that is modified by the ILC algorithm in order to
+acquire the desired output response. The transfer operator
+<span class="math notranslate nohighlight">\(\mathcal{S}_1(q)\)</span> is assumed to be stable (i.e., a stabilizing
+RST controller is set).</p>
+<p>Let us denote the error of the ILC closed-loop system as
+<span class="math notranslate nohighlight">\(e_l(k) \triangleq y_d(k)-y_l(k)\)</span>; the first-order ILC algorithm
+can then be expressed as</p>
+<div class="math notranslate nohighlight" id="equation-ilc-update">
+<span class="eqno">(4)<a class="headerlink" href="#equation-ilc-update" title="Permalink to this equation">¶</a></span>\[r_{l+1}(k) = Q(q)[r_l(k) + L(q)e_l(k)],\]</div>
+<p>where <span class="math notranslate nohighlight">\(Q(q)\)</span> and <span class="math notranslate nohighlight">\(L(q)\)</span> are known as the Q-filter and
+learning filter, respectively. The question now remains, how can the
+Q-filter and learning function be designed to produce the best tracking
+performance? It can be shown that if</p>
+<div class="math notranslate nohighlight">
+\[\|Q(z)[1-L(z)\mathcal{S}_1(z)] \|_\infty &lt; 1,\]</div>
+<p>then the update equation in <a class="reference internal" href="#equation-ilc-update">(4)</a> will produce an output <span class="math notranslate nohighlight">\(y_l(k)\)</span>
+that is asymptotically stable.</p>
+<p>The Q-filter can generally be set as a simply low-pass filter with a
+particular bandwidth (and unity gain). The bandwidth represents the
+frequency at which the ILC algorithm is no longer active. Thus
+frequencies above the Q-filter bandwidth are not tracked. However,
+setting a bandwidth too large will reduce the system robustness to
+uncertainties from <span class="math notranslate nohighlight">\(\mathcal{S}_{ry}\)</span>. Thus there is a trade-off
+between robustness and tracking performance.</p>
+<p>The FGC cannot implement an IIR low-pass for the Q-filter. Thus an FIR
+is used to approximate the IIR response. PyFresco parameterizes the filters
+as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+    L(\alpha) &amp;= \sum_{k=-n_l}^{n_l} \alpha_k z^k \\
+    Q(\beta) &amp;= \sum_{k=-n_q}^{n_q} \beta_k z^k, \quad \beta_i = \beta_{-i} \ \forall i
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(n_l\)</span> [<a class="reference internal" href="../api_doc/ui_params_obcd.html#n-ilc"><span class="std std-ref">n_ilc</span></a>] and <span class="math notranslate nohighlight">\(n_q\)</span>
+[<a class="reference internal" href="../api_doc/ui_params_obcd.html#n-q"><span class="std std-ref">n_q</span></a>] represent the orders of the filters. Note
+that the Q-filter is symmetric (to produce zero-phase filtering). Given
+this parameterization, the following optimization can be constructed:</p>
+<div class="math notranslate nohighlight" id="equation-ilc-nonconvex">
+<span class="eqno">(5)<a class="headerlink" href="#equation-ilc-nonconvex" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+    &amp; \underset{ \alpha, \beta, \gamma}{\text{minimize}}
+    &amp; &amp; \gamma  \\
+    &amp; \text{subject to:} &amp; &amp; \left| Q(\beta)(1 - L(\alpha)S_{ry}) \right| &lt; \gamma \\
+    &amp; &amp; &amp; \gamma &lt; 1 \\
+    &amp; &amp; &amp; \forall \omega \in \Omega
+    \end{aligned}\end{split}\]</div>
+<p>Any feasible solution will guarantee the asymptotically stability of the
+ILC algorithm. However, the above optimization is non-convex (which
+causes computational problems).</p>
+<div class="section" id="q-filter-optimization">
+<h3>Q-Filter Optimization<a class="headerlink" href="#q-filter-optimization" title="Permalink to this headline">¶</a></h3>
+<p>PyFresco convexifies the problem in <a class="reference internal" href="#equation-ilc-nonconvex">(5)</a> by optimizing the Q-filter
+separately from the learning function. The Q-filter can be obtained by
+solving the following simple problem:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+        &amp; \underset{\beta}{\text{minimize}} &amp; &amp; \||Q_d| - Q(\beta)  \|_1 \\
+        &amp; \text{subject to:} &amp; &amp; \sum \beta_k = 1
+    \end{aligned}\end{split}\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[Q_d = \frac{\omega_q^2}{s^2 + 2\omega_q s + \omega_q^2}, \quad
+\omega_q = 2 \pi f_{q} \left[ \sqrt{2}-1 \right]^{-0.5}\]</div>
+<p>and <span class="math notranslate nohighlight">\(f_{q}\)</span> [<a class="reference internal" href="../api_doc/ui_params_obcd.html#q-bw"><span class="std std-ref">q_bw</span></a>] is the <em>desired</em>
+bandwidth of the Q-filter. The constraint in the problem ensures unity
+gain. Experimentation shows that minimizing the <span class="math notranslate nohighlight">\(\mathcal{H}_1\)</span>
+criterion produces the most consistent results.</p>
+</div>
+<div class="section" id="learning-function-optimization">
+<h3>Learning Function Optimization<a class="headerlink" href="#learning-function-optimization" title="Permalink to this headline">¶</a></h3>
+<p>With a feasible solution <span class="math notranslate nohighlight">\(\beta^*\)</span> obtained from the Q-filter
+optimization, the optimization problem in <a class="reference internal" href="#equation-ilc-nonconvex">(5)</a> can then efficiently be
+solved:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+    &amp; \underset{ \alpha, \gamma}{\text{minimize}}
+    &amp; &amp; \gamma  \\
+    &amp; \text{subject to:} &amp; &amp; \left| Q(\beta^*)(1 - L(\alpha)S_{ry}) \right| &lt; \gamma \\
+    &amp; &amp; &amp; \gamma &lt; 1 \\
+    &amp; &amp; &amp; \forall \omega \in \Omega
+    \end{aligned}\end{split}\]</div>
+<p>This problem is now convex and can efficiently be solved with CVXPY.
+PyFresco calculates the optimal solution by increasing the filter order
+<span class="math notranslate nohighlight">\(n_l\)</span> (if needed) until feasibility is achieved.</p>
+<ul>
+<li><p>If the ILC filter is designed based on a model-driven optimization,
+then the implementation of a filter <span class="math notranslate nohighlight">\(Q \neq 1\)</span> is recommended
+(in order to achieve some robustness to model uncertainties). The
+lower the bandwidth of the Q-filter, the better the robustness (at
+the cost of tracking performance).</p></li>
+<li><p>If the ILC filter is designed based on a data-driven optimization
+(with a frequency response that is not too noisy), then the
+implementation of a filter <span class="math notranslate nohighlight">\(Q = 1\)</span> (or a filter with a large
+<span class="math notranslate nohighlight">\(f_q\)</span>) may be implemented to achieve the best possible tracking
+performance. A higher order <span class="math notranslate nohighlight">\(n_l\)</span> is recommended to increase
+the robustness. If the frequency response is noisy, a Q-filter with a
+lower bandwidth is recommended.</p>
+<p>[lastpage]</p>
+</li>
+</ul>
+<dl class="footnote brackets">
+<dt class="label" id="id2"><span class="brackets"><a class="fn-backref" href="#id1">1</a></span></dt>
+<dd><p>The optimization problem, as stated, is not Disciplined Parametrized
+Programming (<a class="reference external" href="https://www.cvxpy.org/tutorial/advanced/#disciplined-parametrized-programming">DPP</a>)
+compliant using the Python package CVXPY. To make it compliant, PyFresco
+implements a new variable <span class="math notranslate nohighlight">\(\gamma_v = \gamma^{-1}\)</span> and performs
+the bisection to maximize <span class="math notranslate nohighlight">\(\gamma_v\)</span> over all frequencies.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="voltage.html" class="btn btn-neutral float-right" title="Voltage Control" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="main.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

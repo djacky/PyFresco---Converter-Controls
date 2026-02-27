@@ -1,0 +1,98 @@
+RST and ILC design for I/B-Loop
+===============================
+
+The examples here will consider designing the RST and ILC controllers for the current loop.
+A design for the field loop will be very similar. For simplicity, the examples will consider the desired
+control parameters taken from the default function (see :ref:`API Reference`):
+
+  .. code-block:: python
+
+    >>> import pyfresco.obcd as cd
+    >>> device = 'RFNA.866.01.ETH2'
+    >>> user_pars_ib = cd.get_default_i(device)
+    >>> user_pars_ib
+    <pyfresco.obcd.props.UiParams object at 0x7f1b94368160>
+
+    >>> vars(user_pars_ib)
+    {'des_bw': 133.3333334, 'des_z': 0.8, 'des_mm': 0.5, 'n_integrators': 2, 'ref_delay': 0, 'opt_method': 'Hinf',
+    'n_r': 6, 'n_s': 6, 'n_t': 6, 'n_ilc': 5, 'n_q': 5, 'q_bw': 400.0, 'control_mode': 'I', 'test_select': False, 'noise_rej': [], 'debug': False}
+    
+    >>> fgc_ib = cd.FgcProperties.from_fgc_ib(user_pars_ib, device)
+    >>> fgc_ib
+    <pyfresco.obcd.props.FgcProperties object at 0x7f1b943684a8>
+    
+    >>> vars(fgc_ib)
+    {'LOAD.OHMS_SER': 9.9999997e-06, 'LOAD.OHMS_MAG': 0.13600001, 'LOAD.OHMS_PAR': 100000000.0, 'LOAD.HENRYS': 0.0063999998, 
+    'LOAD.GAUSS_PER_AMP': 1.0, 'VS.SIM.BANDWIDTH': 1000.0, 'VS.SIM.Z': 0.69999999, 'VS.ACTUATION': 'VOLTAGE_REF', 
+    'VS.FIRING.DELAY': 0.00166667, 'VS.ACT_DELAY_ITERS': 1.5, 'REG.I.PERIOD_ITERS': 5.0, 'FGC.ITER_PERIOD': 9.9999997e-05, 
+    'REG.I.INTERNAL.PURE_DELAY_PERIODS': 0.0, 'MEAS.I.DELAY_ITERS': 0.51999998, 'MEAS.V.DELAY_ITERS': 0.51999998, 
+    'REG.I.EXTERNAL.MEAS_SELECT': 'UNFILTERED', 'REG.I.EXTERNAL.Z': 0.80000001, 'REG.I.EXTERNAL.MOD_MARGIN': 0.5, 'MEAS.I.FIR_LENGTHS': [0, 0]}
+
+
+
+Model-based design (I/B)
+------------------------
+
+The model-based design uses the FGC properties to design a controller. It is thus imperative that the correct
+load properties are set in the FGC. This method can be used in cases where a frequency response measurement 
+cannot be obtained from a particular power converter. The model-based design can be completed by simply calling 
+the following functions:
+
+
+  .. code-block:: python
+
+    >>> X = cd.OptimizeIB(fgc_ib, user_pars_ib)
+    >>> opt_result, df_sens, margins = X.model_opt()
+    >>> vars(opt_result)
+    {'R': array([10.58623286, -5.57877783, -6.82957127, -3.67676923,  5.35465179, 0.31557969]),
+    'S': array([ 1.        , -0.60378036, -0.81877469, -0.21697569,  0.30539692, 0.33413383]),
+    'T': array([ 2.82797628, -0.6342463 , -0.39158306, -1.2070911 , -0.47758528, 0.05387546]),
+    'dtrack': 3.4554860956062403,
+    'L': array([ 0.15354691, -0.43997275,  0.60930577, -0.46870985,  2.23952406, -5.02945471,  1.24076391,  4.6586344 , -3.39532177,  2.07031252, -0.64104597]),
+    'Q': array([ 5.25225103e-04, -1.24165523e-03,  6.52180501e-03,  1.08316106e-02, 1.67918023e-01,  6.30889983e-01,  1.67918023e-01,  1.08316106e-02, 6.52180501e-03, -1.24165523e-03,  5.25225103e-04])}
+
+The :code:`opt_result` object contains both the RST and ILC filter parameters (along with 
+`REG.I.EXTERNAL.TRACK_DELAY_PERIODS <http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyREG.htm#REG.I.EXTERNAL.TRACK_DELAY_PERIODS>`__
+given by the parameter :code:`dtrack`). The results from the optimization problem can 
+then be sent to the FGC as follows:
+
+  .. code-block:: python
+
+    >>> cd.FgcProperties.to_fgc_ib(opt_result, user_pars_ib, device)
+
+The output dataframe :code:`df_sens` contains the closed-loop sensitivity functions, and is discussed in 
+:ref:`Sensitivity function analysis`. Finally, :code:`margins` contains the calculated robustness
+margins (in dictionary format) of the closed-loop system: :code:`modulus_margin`, :code:`gain_margin`,
+:code:`phase_margin` and :code:`delay_margin`.
+
+Data-driven design (I/B)
+------------------------
+
+To perform a data-driven design, the frequency response from V_REF to I_MEAS is needed (or V_REF to B_MEAS
+for field control). Let us suppose that a PRBS or sine-fit experiment was performed with the following frequency
+response
+
+  .. code-block:: python
+
+    >>> df_freq
+               f        gain       phase
+    0       1.220852   16.797757  -20.015512
+    1       2.441704   15.510021  -36.172323
+    2       3.662556   13.963785  -47.810938
+    3       4.883409   12.442825  -56.015474
+    4       6.104261   11.044407  -61.922417
+    ..           ...         ...         ...
+
+The data-driven design can then be completed by simply calling the following functions:
+
+  .. code-block:: python
+
+    >>> X = cd.OptimizeIB(fgc_ib, user_pars_ib)
+    >>> opt_result, df_sens, margins = X.data_opt(df_freq)
+    >>> vars(opt_result)
+    {'R': array([10.82914723, -6.04830058, -6.37072024, -4.0319094 ,  5.5032835 , 0.30051736]),
+    'S': array([ 1.        , -0.60540888, -0.81165273, -0.21422895,  0.28505159, 0.34623896]),
+    'T': array([ 2.86164262, -0.66994455, -0.34357477, -1.21909757, -0.49924941, 0.05224155]),
+    'dtrack': 3.411909048893395,
+    'L': array([ 0.75694795, -1.38435525,  1.11347752, -0.59444607,  2.40050818, -5.41419615,  1.86901783,  4.13754392, -4.15915052,  4.43455996, -2.29519351]),
+    'Q': array([ 0.00076679, -0.0014831 ,  0.00658921,  0.01081398,  0.16783134, 0.63096355,  0.16783134,  0.01081398,  0.00658921, -0.0014831 , 0.00076679])}

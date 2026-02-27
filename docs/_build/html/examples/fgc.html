@@ -1,0 +1,271 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Get/Send controller values to FGC &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Sensitivity function analysis" href="sens.html" />
+    <link rel="prev" title="Controller design for V-Loop" href="V_loop.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../tutorial/main.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_doc/main.html">API Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="main.html">Examples</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="main.html#obcd-examples">ObCD Examples</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="RST_IB.html">RST and ILC design for I/B-Loop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="V_loop.html">Controller design for V-Loop</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Get/Send controller values to FGC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sens.html">Sensitivity function analysis</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="main.html#frm-examples">FRM Examples</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="main.html">Examples</a> &raquo;</li>
+        
+      <li>Get/Send controller values to FGC</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/examples/fgc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="get-send-controller-values-to-fgc">
+<h1>Get/Send controller values to FGC<a class="headerlink" href="#get-send-controller-values-to-fgc" title="Permalink to this headline">¶</a></h1>
+<blockquote>
+<div><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyfresco.obcd</span> <span class="k">as</span> <span class="nn">cd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;RFNA.866.01.ETH2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">user_pars_ib</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">get_default_i</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">user_pars_ib</span>
+<span class="go">&lt;pyfresco.obcd.props.UiParams object at 0x7f1b94368160&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">vars</span><span class="p">(</span><span class="n">user_pars_ib</span><span class="p">)</span>
+<span class="go">{&#39;des_bw&#39;: 133.33333333333334, &#39;des_z&#39;: 0.8, &#39;des_mm&#39;: 0.5, &#39;n_integrators&#39;: 2, &#39;ref_delay&#39;: 0, &#39;opt_method&#39;: &#39;Hinf&#39;, &#39;n_r&#39;: 6,</span>
+<span class="go">&#39;n_s&#39;: 6, &#39;n_t&#39;: 6, &#39;n_ilc&#39;: 5, &#39;n_q&#39;: 5, &#39;q_bw&#39;: 0, &#39;control_mode&#39;: &#39;I&#39;, &#39;test_select&#39;: 0, &#39;noise_rej&#39;: []}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fgc_ib</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">FgcProperties</span><span class="o">.</span><span class="n">from_fgc_ib</span><span class="p">(</span><span class="n">user_pars_ib</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fgc_ib</span>
+<span class="go">&lt;pyfresco.obcd.props.FgcProperties object at 0x7f1b943684a8&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">vars</span><span class="p">(</span><span class="n">fgc_ib</span><span class="p">)</span>
+<span class="go">{&#39;LOAD.OHMS_SER&#39;: 9.9999997e-06, &#39;LOAD.OHMS_MAG&#39;: 0.13600001, &#39;LOAD.OHMS_PAR&#39;: 100000000.0, &#39;LOAD.HENRYS&#39;: 0.0063999998,</span>
+<span class="go">&#39;LOAD.GAUSS_PER_AMP&#39;: 1.0, &#39;VS.SIM.BANDWIDTH&#39;: 1000.0, &#39;VS.SIM.Z&#39;: 0.69999999, &#39;VS.ACTUATION&#39;: &#39;VOLTAGE_REF&#39;,</span>
+<span class="go">&#39;VS.FIRING.DELAY&#39;: 0.00166667, &#39;VS.ACT_DELAY_ITERS&#39;: 1.5, &#39;REG.I.PERIOD_ITERS&#39;: 5.0, &#39;FGC.ITER_PERIOD&#39;: 9.9999997e-05,</span>
+<span class="go">&#39;REG.I.INTERNAL.PURE_DELAY_PERIODS&#39;: 0.0, &#39;MEAS.I.DELAY_ITERS&#39;: 0.51999998, &#39;MEAS.V.DELAY_ITERS&#39;: 0.51999998,</span>
+<span class="go">&#39;REG.I.EXTERNAL.MEAS_SELECT&#39;: &#39;UNFILTERED&#39;, &#39;REG.I.EXTERNAL.Z&#39;: 0.80000001, &#39;REG.I.EXTERNAL.MOD_MARGIN&#39;: 0.5, &#39;MEAS.I.FIR_LENGTHS&#39;: [0, 0]}</span>
+</pre></div>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pyfresco.obcd</span> <span class="k">as</span> <span class="nn">cd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">device</span> <span class="o">=</span> <span class="s1">&#39;RFNA.866.01.ETH2&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">user_pars_v</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">get_default_v</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">user_pars_v</span>
+<span class="go">&lt;pyfresco.obcd.props.UiParams object at 0x7fba77baf7f0&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">vars</span><span class="p">(</span><span class="n">user_pars_v</span><span class="p">)</span>
+<span class="go">{&#39;damp_bw&#39;: 75, &#39;damp_z&#39;: 0.8, &#39;volt_mm&#39;: 0.5, &#39;opt_method&#39;: &#39;Hinf&#39;, &#39;volt_bw&#39;: 50, &#39;volt_z&#39;: 0.8, &#39;ref_delay&#39;: 0, &#39;control_mode&#39;: &#39;V&#39;}</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fgc_v</span> <span class="o">=</span> <span class="n">cd</span><span class="o">.</span><span class="n">FgcProperties</span><span class="o">.</span><span class="n">from_fgc_v</span><span class="p">(</span><span class="n">user_pars_v</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fgc_v</span>
+<span class="go">&lt;pyfresco.obcd.props.FgcProperties object at 0x7fba77baf0f0&gt;</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">vars</span><span class="p">(</span><span class="n">fgc_v</span><span class="p">)</span>
+<span class="go">{&#39;LOAD.OHMS_SER&#39;: 9.9999997e-06, &#39;LOAD.OHMS_MAG&#39;: 0.13600001, &#39;LOAD.OHMS_PAR&#39;: 100000000.0, &#39;LOAD.HENRYS&#39;: 0.0063999998, &#39;LOAD.GAUSS_PER_AMP&#39;: 1.0,</span>
+<span class="go"> &#39;VS.ACTUATION&#39;: &#39;VOLTAGE_REF&#39;, &#39;VS.FIRING.DELAY&#39;: 0.00166667, &#39;VS.ACT_DELAY_ITERS&#39;: 1.5, &#39;FGC.ITER_PERIOD&#39;: 9.9999997e-05, &#39;VS.FILTER.FARADS1&#39;: 0.039999999,</span>
+<span class="go"> &#39;VS.FILTER.FARADS2&#39;: 0.0099999998, &#39;VS.FILTER.OHMS&#39;: 0.0070000002, &#39;VS.FILTER.HENRYS&#39;: 0.00060000003, &#39;REG.I.INTERNAL.PURE_DELAY_PERIODS&#39;: 0.0,</span>
+<span class="go"> &#39;MEAS.I.DELAY_ITERS&#39;: 0.51999998, &#39;MEAS.V.DELAY_ITERS&#39;: 0.51999998}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="sens.html" class="btn btn-neutral float-right" title="Sensitivity function analysis" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="V_loop.html" class="btn btn-neutral float-left" title="Controller design for V-Loop" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,539 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Voltage Control &mdash; Python Frequency Response-based Controller Optimization  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="PRBS" href="prbs.html" />
+    <link rel="prev" title="Current/Field Control" href="current_field.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> Python Frequency Response-based Controller Optimization
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="main.html">Tutorial</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="main.html#obcd">ObCD</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="current_field.html">Current/Field Control</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Voltage Control</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#damping-loop-design">Damping Loop Design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#voltage-loop-design">Voltage Loop Design</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="main.html#frm">FRM</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api_doc/main.html">API Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../examples/main.html">Examples</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Python Frequency Response-based Controller Optimization</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="main.html">Tutorial</a> &raquo;</li>
+        
+      <li>Voltage Control</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/tutorial/voltage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="voltage-control">
+<h1>Voltage Control<a class="headerlink" href="#voltage-control" title="Permalink to this headline">¶</a></h1>
+<p>The basic structure of the voltage loop is shown in
+<a class="reference internal" href="#voltage-block"><span class="std std-numref">Fig. 3</span></a>. It is recommended that the user consult
+<a class="reference external" href="https://edms.cern.ch/document/2001105/1">this document</a> before
+continuing, as the discussion here will be an extension to that content.
+For a more detailed diagram of the FGC implementation strategy, <a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/images/platforms/fgc3/vreg.png">click
+here.</a></p>
+<p>For the remaining portions of this documentation, the notation
+<span class="math notranslate nohighlight">\(\mathcal{S}_{xy}\)</span> will be used to represent the sensitivity
+function from a signal <span class="math notranslate nohighlight">\(x\)</span> to a signal <span class="math notranslate nohighlight">\(y\)</span>. For all
+controller designs within the FGC, the <em>desired</em> closed-loop transfer
+function (technically the <em>complementary sensitivity function</em>) is
+selected as a (delayed) standard second-order system:</p>
+<div class="math notranslate nohighlight">
+\[\label{eq:2nd_order}
+\mathcal{S}_{ry}^d(s) = \frac{\omega_{d}^2}{s^2 + 2\zeta \omega_{d} s + \omega_{d}^2} e^{-sd_r},\]</div>
+<p>where <span class="math notranslate nohighlight">\(r\)</span> is the input reference, <span class="math notranslate nohighlight">\(y\)</span> is the output,
+<span class="math notranslate nohighlight">\(\zeta \:\)</span> is the <em>desired</em> damping factor, <span class="math notranslate nohighlight">\(d_r\)</span> is the
+<em>desired</em> reference delay and</p>
+<div class="math notranslate nohighlight">
+\[\omega_d = 2 \pi f_d \left[ 1-2\zeta^2 + \sqrt{2-4\zeta^2 + 4\zeta^4} \right]^{-0.5},\]</div>
+<p>where <span class="math notranslate nohighlight">\(f_{d}\)</span> [Hz] is the <em>desired</em> closed-loop bandwidth of the
+system.</p>
+<p>From <a class="reference internal" href="#voltage-block"><span class="std std-numref">Fig. 3</span></a>, it can be observed that there are two
+main loops to control; the damping loop <span class="math notranslate nohighlight">\(\mathcal{S}_{v_d v_0}\)</span>
+and the voltage loop <span class="math notranslate nohighlight">\(\mathcal{S}_{v_r v_0}\)</span>. PyFresco implements an
+optimization strategy which first calculates the damping loop parameters
+<span class="math notranslate nohighlight">\(\rho_d = \{k_i, k_d, k_u \}\)</span> and then uses those parameters to
+formulate <span class="math notranslate nohighlight">\(\mathcal{S}_{v_d v_0}\)</span> (note that
+<span class="math notranslate nohighlight">\(k_w = 1+k_u+D_mk_d\)</span>, where <span class="math notranslate nohighlight">\(D_m\)</span> is the dc-gain of the
+magnet <span class="math notranslate nohighlight">\(M(s)\)</span>). With <span class="math notranslate nohighlight">\(\mathcal{S}_{v_d v_0}\)</span>, the voltage
+loop parameters <span class="math notranslate nohighlight">\(\rho_v = \{k_{ff}, k_p, k_{int}\}\)</span> (with
+<span class="math notranslate nohighlight">\(C(z^{-1}) = k_p + k_{int}T_v(1-z^{-1})^{-1}\)</span>, and <span class="math notranslate nohighlight">\(T_v\)</span> [s]
+being the voltage loop sampling time) can then be efficiently
+calculated. This two-step process is performed to convexify the
+optimization constraints and avoid the problems that can occur with
+bi-linear terms. As with the RST synthesis, the user will have the
+option to minimize either the <span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> or
+<span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> criterion. Both of these methods will now be
+discussed for each loop.</p>
+<div class="figure align-default" id="id5">
+<span id="voltage-block"></span><img alt="ILC structure" src="../_images/voltage_loop.png" />
+<p class="caption"><span class="caption-number">Fig. 3 </span><span class="caption-text">Interconnection of the power converter control system (voltage
+source).</span><a class="headerlink" href="#id5" title="Permalink to this image">¶</a></p>
+</div>
+<div class="section" id="damping-loop-design">
+<h2>Damping Loop Design<a class="headerlink" href="#damping-loop-design" title="Permalink to this headline">¶</a></h2>
+<p>The (closed-loop) transfer function for the damping loop can be
+expressed as
+<span class="math notranslate nohighlight">\(\mathcal{S}_{v_d v_0}(\rho_d) = Gk_w\psi_d^{-1}(\rho_d)\)</span> where</p>
+<div class="math notranslate nohighlight">
+\[\psi_d(\rho_d) = 1+G(k_iHe^{-s\tau_i} + k_dMe^{-s\tau_i} + k_ue^{-s\tau_v})\]</div>
+<p>and <span class="math notranslate nohighlight">\(G = G_0e^{-s\tau_b}\)</span> (where the ADC’s and sensors are
+approximated as pure delays <span class="math notranslate nohighlight">\(\tau_i\)</span> [s] and <span class="math notranslate nohighlight">\(\tau_v\)</span> [s]).
+The delay <span class="math notranslate nohighlight">\(\tau_b\)</span> [s] represents the delay approximation of the
+power block. Generally, for 6-pulse thyristor converters, this “delay”
+can be approximated to have a value of <span class="math notranslate nohighlight">\(1.6667\)</span>ms. For a
+12-pulse converter, it would be half of this value. The value of
+<span class="math notranslate nohighlight">\(\tau_b\)</span> should be correctly set in the FGC property
+<a class="reference external" href="http://proj-fgc.web.cern.ch/proj-fgc/gendoc/def/PropertyVS.htm#VS.FIRING.DELAY">VS.FIRING.DELAY</a>.</p>
+<div class="section" id="mathcal-h-infty-control">
+<span id="mathcalh-infty-control-1"></span><h3><span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> Control<a class="headerlink" href="#mathcal-h-infty-control" title="Permalink to this headline">¶</a></h3>
+<p>[<a class="reference internal" href="../api_doc/ui_params_obcd.html#opt-method-v"><span class="std std-ref">opt_method</span></a>]</p>
+<p>In the <span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> sense, the objective is to minimize
+<span class="math notranslate nohighlight">\(\|W_d(1 - \mathcal{S}_{v_dv_0}) \|_\infty\)</span>; an equivalent
+representation of this objective is to minimize <span class="math notranslate nohighlight">\(\gamma\)</span> such that
+<span class="math notranslate nohighlight">\(\|W_d(1 - \mathcal{S}_{v_dv_0})  \|_\infty^2 &lt; \gamma\)</span> (which is
+the epigraph form of the minimization criterion). This criterion is
+satisfied if the following optimization problem is considered:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+        &amp; \underset{ \rho_d,\gamma}{\text{minimize}}
+        &amp; &amp; \gamma  \\
+        &amp; \text{subject to:} &amp; &amp; \left[W_d(1-\mathcal{S}_{v_dv_0}(\rho_d)) \right]^{\star} \left[W_d(1-\mathcal{S}_{v_dv_0}(\rho_d)) \right] &lt; \gamma \\
+        &amp; &amp; &amp; \rho_d \geq 0 \\
+        &amp; &amp; &amp;\forall \omega \in \Omega
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(W_d = (1-\mathcal{S}_{v_dv_0}^d)^{-1}\)</span> (with
+<span class="math notranslate nohighlight">\(\mathcal{S}_{v_dv_0}^d\)</span> being the desired second-order response).
+The desired <a class="reference internal" href="../api_doc/ui_params_obcd.html#damp-bw"><span class="std std-ref">bandwidth</span></a>, <a class="reference internal" href="../api_doc/ui_params_obcd.html#damp-z"><span class="std std-ref">damping</span></a>, and
+<a class="reference internal" href="../api_doc/ui_params_obcd.html#ref-delay-v"><span class="std std-ref">reference delay</span></a> are taken into account with <span class="math notranslate nohighlight">\(W_d\)</span>.
+The second constraint in the problem ensures that the damping loop gains
+are all greater than zero (which is a desired requirement asserted by TE-EPC
+to ensure that proper debugging can take place; each individual loop within
+the damping loop can be tested without any phase inversion).
+As was discussed in the <a class="reference internal" href="current_field.html#rst-hinf-control"><span class="std std-ref">RST synthesis</span></a>,
+the above problem is convexified as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+        &amp; \underset{ \rho_d,\gamma}{\text{minimize}}
+        &amp; &amp; \gamma  \\
+        &amp; \text{subject to:} &amp; &amp; \gamma^{-1} \left|W_d(\psi_d(\rho_d)-Gk_w) \right|^2   &lt; 2\Re \left\{\psi_d(\rho_d) \psi_d^{\star}(\rho_{d,0}) \right\} - \left|\psi_d(\rho_{d,0}) \right|^2 \\
+        &amp; &amp; &amp;  \Delta M_d^2 &lt; 2\Re \left\{\psi_d(\rho_d) \psi_d^{\star}(\rho_{d,0}) \right\} - \left|\psi_d(\rho_{d,0}) \right|^2 \\
+        &amp; &amp; &amp; \rho_d \geq 0 \\
+        &amp; &amp; &amp; \forall \omega \in \Omega
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\rho_{d,0}\)</span> is the initial stabilizing controller.
+The second constraint in this problem ensures that the damping loop
+possesses a minimum <a class="reference internal" href="../api_doc/ui_params_obcd.html#damp-mm"><span class="std std-ref">modulus margin</span></a> <span class="math notranslate nohighlight">\(\Delta M_d\)</span>. For the
+damping loop, PyFresco sets <span class="math notranslate nohighlight">\(\rho_{d,0}\)</span> to small positive constants;
+this is sufficient to ensure the stability of the damping loop. The same
+iterative procedure (as detailed in <a class="reference internal" href="current_field.html#rst-hinf-control"><span class="std std-ref">RST synthesis</span></a>) is then performed to obtain the
+optimal solution.</p>
+</div>
+<div class="section" id="mathcal-h-2-control">
+<span id="mathcalh-2-control-1"></span><h3><span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> Control<a class="headerlink" href="#mathcal-h-2-control" title="Permalink to this headline">¶</a></h3>
+<p>[<a class="reference internal" href="../api_doc/ui_params_obcd.html#opt-method-v"><span class="std std-ref">opt_method</span></a>]</p>
+<p>A similar linearization process can be used to obtain
+<span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> performance for the damping and voltage loops. An
+optimization problem can be formulated for minimizing the square of the
+<span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> model-reference damping loop objective (i.e.,
+minimizing
+<span class="math notranslate nohighlight">\(\|W_{d_2}(\mathcal{S}_{v_dv_0}(\rho_d) - \mathcal{S}_{v_dv_0}^d) \|_2^2\)</span>);
+the optimization problem for this criteria can be expressed as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+        &amp; \underset{ \rho_d, \gamma,\Gamma}{\text{minimize}} &amp; &amp; \gamma=\int_{-\pi / {T_v}}^{\pi / {T_v}} \Gamma(\omega) d\omega  \\
+        &amp; \text{subject to:} &amp; &amp; \left[W_{d_2}(\mathcal{S}_{v_dv_0}(\rho_d) - \mathcal{S}_{v_dv_0}^d)\right]^{\star} \left[W_{d_2}(\mathcal{S}_{v_dv_0}(\rho_d) - \mathcal{S}_{v_dv_0}^d)\right] &lt; \Gamma(\omega) \\
+        &amp; &amp; &amp; \rho_d \geq 0 \\
+        &amp; &amp; &amp;\forall \omega \in \Omega
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Gamma(\omega) \in \mathbb{R}_+\)</span> is an unknown function of
+<span class="math notranslate nohighlight">\(\omega\)</span> and <span class="math notranslate nohighlight">\(W_{d_2} = 2 \pi \cdot\)</span> <a class="reference internal" href="../api_doc/ui_params_obcd.html#damp-bw"><span class="std std-ref">damp_bw</span></a>
+<span class="math notranslate nohighlight">\(\cdot s^{-1}\)</span>. As with the <a class="reference internal" href="current_field.html#rst-hinf-control"><span class="std std-ref">RST synthesis</span></a>,
+this <span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> optimization problem can
+be convexified and efficiently solved as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+    &amp; \underset{ \rho_d, \gamma, \Gamma}{\text{minimize}} &amp; &amp;  \gamma=\int_{-\pi / {T_v}}^{\pi / {T_v}} \Gamma(\omega) d\omega  \\
+    &amp; \text{subject to:}
+    &amp; &amp;
+    \begin{bmatrix}
+    \psi_d^{\star}(\rho_d)\psi_{d,0} + \psi_{d,0}^{\star}\psi_d(\rho_d) - \psi_{d,0}^{\star}\psi_{d,0} &amp; \phantom{xx} \left[W_{d_2}(Gk_w - \psi_d(\rho_d)\mathcal{S}_{v_dv_0}^d) \right]^{\star} \\
+    W_{d_2}(Gk_w - \psi_d(\rho_d)\mathcal{S}_{v_dv_0}^d) &amp; \phantom{xx} \Gamma (\omega)
+    \end{bmatrix} \succ 0  \\
+    &amp; &amp; &amp;
+    \begin{bmatrix}
+    \psi_d^{\star}(\rho_d)\psi_{d,0} + \psi_{d,0}^{\star}\psi_d(\rho_d) - \psi_{d,0}^{\star}\psi_{d,0} &amp; \phantom{xx} \Delta M_d^{\star} \\
+    \Delta M_d &amp; \phantom{xx} 1
+    \end{bmatrix} \succ 0  \\
+    &amp; &amp; &amp; \rho_d \geq 0 \\
+    &amp; &amp; &amp; \forall \omega \in \Omega
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\psi_{d,0} = \psi_d(\rho_{d,0})\)</span>. As with the
+<span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> method, PyFresco sets the initial stabilizing
+controller <span class="math notranslate nohighlight">\(\rho_{d,0}\)</span> to small positive constants in order to
+guarantee the stability of the final controller. To better approximate the integral function,
+a trapezoidal approximation of the objective function is used, i.e.,
+<span class="math notranslate nohighlight">\(\gamma \approx \sum_{k=1}^{\eta} \left(\frac{\Gamma_{k} + \Gamma_{k+1}}{2}\right)(\omega_{k+1} - \omega_{k})\)</span>.</p>
+</div>
+</div>
+<div class="section" id="voltage-loop-design">
+<h2>Voltage Loop Design<a class="headerlink" href="#voltage-loop-design" title="Permalink to this headline">¶</a></h2>
+<p>Once PyFresco has obtained the optimal parameters for the damping loop
+<span class="math notranslate nohighlight">\(\rho_d^*\)</span>, the voltage loop synthesis can then commence. The
+(closed-loop) transfer function for the voltage loop can be expressed as
+<span class="math notranslate nohighlight">\(\mathcal{S}_{v_r v_0}(\rho_v) = \mathcal{S}_{v_dv_0}(\rho_d^*)[k_{ff} + C(\rho_v)]\psi_v^{-1}(\rho_v)\)</span>
+where
+<span class="math notranslate nohighlight">\(\psi_v(\rho_v) = 1+\mathcal{S}_{v_dv_0}(\rho_d^*)C(\rho_v)e^{-s\tau_v}\)</span>.
+The next step is to then perform the necessary optimization to obtain
+the optimal voltage loop parameters <span class="math notranslate nohighlight">\(\rho_v^*\)</span>.</p>
+<div class="section" id="mathcalh-infty-control-2">
+<span id="id1"></span><h3><span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> Control<a class="headerlink" href="#mathcalh-infty-control-2" title="Permalink to this headline">¶</a></h3>
+<p>[<a class="reference internal" href="../api_doc/ui_params_obcd.html#opt-method-v"><span class="std std-ref">opt_method</span></a>]</p>
+<p>With the optimal parameters <span class="math notranslate nohighlight">\(\rho_d*\)</span> obtained from the damping
+loop optimization above, the objective is to now minimize
+<span class="math notranslate nohighlight">\(\|W_v(1 - \mathcal{S}_{v_rv_0}) \|_\infty\)</span> where
+<span class="math notranslate nohighlight">\(W_v = (1-\mathcal{S}_{v_rv_0}^d)^{-1}\)</span> (with
+<span class="math notranslate nohighlight">\(\mathcal{S}_{v_rv_0}^d\)</span> being the desired second-order response).
+The desired <a class="reference internal" href="../api_doc/ui_params_obcd.html#volt-bw"><span class="std std-ref">bandwidth</span></a>, <a class="reference internal" href="../api_doc/ui_params_obcd.html#volt-z"><span class="std std-ref">damping</span></a>, and
+<a class="reference internal" href="../api_doc/ui_params_obcd.html#ref-delay-v"><span class="std std-ref">reference delay</span></a> are taken into account with <span class="math notranslate nohighlight">\(W_v\)</span>.
+As with the damping loop, the
+voltage loop optimization problem can then be convexified as follows:</p>
+<div class="math notranslate nohighlight" id="equation-opt-hinf-v">
+<span class="eqno">(6)<a class="headerlink" href="#equation-opt-hinf-v" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+        &amp; \underset{ \rho_v,\gamma}{\text{minimize}}
+        &amp; &amp; \gamma  \\
+        &amp; \text{subject to:} &amp; &amp; \gamma^{-1} \left| \mathcal{M}(\rho_v) \right|^2   &lt; 2\Re \left\{\psi_v(\rho_v) \psi_v^{\star}(\rho_{v,0}) \right\} - \left|\psi_v(\rho_{v,0}) \right|^2 \\
+        &amp; &amp; &amp;  \Delta M_v^2 &lt; 2\Re \left\{\psi_v(\rho_v) \psi_v^{\star}(\rho_{v,0}) \right\} - \left|\psi_v(\rho_{v,0}) \right|^2 \\
+        &amp; &amp; &amp;\forall \omega \in \Omega
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\rho_{v,0}\)</span> is the initial stabilizing controller and</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{M}(\rho_v) = W_v[\psi_v(\rho_v)-\mathcal{S}_{v_dv_0}(\rho_d^*)(k_{ff} + C(\rho_v))].\]</div>
+<p>The second constraint in this problem ensures that the voltage loop
+possesses a minimum <a class="reference internal" href="../api_doc/ui_params_obcd.html#volt-mm"><span class="std std-ref">modulus margin</span></a> <span class="math notranslate nohighlight">\(\Delta M_v\)</span>. Unlike the damping loop
+optimization, selecting this initial controller is not as trivial as
+setting small constant values for the controller parameters. Therefore,
+the methods in <a class="reference external" href="https://doi.org/10.1109/TCST.2017.2783346">here</a> are
+first used to design the initial stabilizing controller. In this method,
+the PI controller is represented as <span class="math notranslate nohighlight">\(C = XY^{-1}\)</span>, where <span class="math notranslate nohighlight">\(X\)</span>
+and <span class="math notranslate nohighlight">\(Y\)</span> are proper, stable transfer functions. Thus for a PI
+controller represented as <span class="math notranslate nohighlight">\(C(s) = k_{p_1} + k_{p_2}/s\)</span>, these
+transfer functions can be formulated as</p>
+<div class="math notranslate nohighlight">
+\[\label{eq:coprimes}
+    X(s) = \frac{k_{p_1}s + k_{p_2}}{s+a} \quad ; \quad Y(s)\frac{s}{s+a},\]</div>
+<p>where <span class="math notranslate nohighlight">\(a&gt;0\)</span> is a free parameter <a class="footnote-reference brackets" href="#id4" id="id2">1</a>. The optimal choice of
+<span class="math notranslate nohighlight">\(a\)</span> is an open research topic; however, the methods
+<a class="reference external" href="https://doi.org/10.1109/TCST.2017.2783346">here</a> can be used to
+solve the <span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> problem for several values of
+<span class="math notranslate nohighlight">\(a\)</span>. The value of <span class="math notranslate nohighlight">\(a\)</span> which yields the best optimal solution
+(i.e., the lowest value of
+<span class="math notranslate nohighlight">\(\|W_v (1-\mathcal{S}_{v_r v_0}) \|_\infty\)</span>) is then selected as
+the initial stabilizing controller to be used in <a class="reference internal" href="#equation-opt-hinf-v">(6)</a>. The values of
+<span class="math notranslate nohighlight">\(a\)</span> can be chosen around the closed-loop bandwidth of the voltage
+loop; in the PyFresco algorithm,</p>
+<div class="math notranslate nohighlight">
+\[a \in \{\omega_{0}/3, \omega_{0}, 3\omega_{0}\},\]</div>
+<p>where
+<span class="math notranslate nohighlight">\(\omega_{0}=2\pi\cdot\)</span><a class="reference internal" href="../api_doc/ui_params_obcd.html#volt-bw"><span class="std std-ref">volt_bw</span></a>.
+Note that in obtaining the initial stabilizing controller,
+<span class="math notranslate nohighlight">\(k_{ff}=0\)</span> is assumed; however, when generating the final
+controller, <span class="math notranslate nohighlight">\(k_{ff}\)</span> is optimized. Also note that the methods
+<a class="reference external" href="https://doi.org/10.1109/TCST.2017.2783346">here</a> ensure very good
+performance for large order controllers; however, since the voltage-loop
+uses a simple PI controller, the performance may not be optimal. This is
+why the <a class="reference external" href="https://doi.org/10.1109/CCTA.2017.8062665">linearization
+methods</a> are then used to
+optimize the performance for low-order controllers.</p>
+</div>
+<div class="section" id="mathcalh-2-control-2">
+<span id="id3"></span><h3><span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> Control<a class="headerlink" href="#mathcalh-2-control-2" title="Permalink to this headline">¶</a></h3>
+<p>[<a class="reference internal" href="../api_doc/ui_params_obcd.html#opt-method-v"><span class="std std-ref">opt_method</span></a>]</p>
+<p>For the voltage loop, the <span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> model-reference
+objective (i.e., minimizing
+<span class="math notranslate nohighlight">\(\|W_{v_2}(\mathcal{S}_{v_rv_0} - \mathcal{S}_{v_rv_0}^d) \|_2^2\)</span>)
+can be constructed as follows:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+        &amp; \underset{ \rho_v, \gamma,\Gamma}{\text{minimize}} &amp; &amp; \gamma=\int_{-\pi / {T_v}}^{\pi / {T_v}} \Gamma(\omega) d\omega  \\
+        &amp; \text{subject to:} &amp; &amp; \left[W_{v_2}(\mathcal{S}_{v_rv_0} - \mathcal{S}_{v_rv_0}^d)\right]^{\star} \left[W_{v_2}(\mathcal{S}_{v_rv_0} - \mathcal{S}_{v_rv_0}^d) \right] &lt; \Gamma(\omega) \\
+        &amp; &amp; &amp;\forall \omega \in \Omega
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(W_{v_2} = 2 \pi \cdot\)</span> <a class="reference internal" href="../api_doc/ui_params_obcd.html#volt-bw"><span class="std std-ref">volt_bw</span></a>
+<span class="math notranslate nohighlight">\(\cdot s^{-1}\)</span>. As with the RST
+synthesis (see <a class="reference internal" href="current_field.html#current-field-control"><span class="std std-ref">Current/Field Control</span></a>), this <span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> optimization problem can
+be convexified and efficiently solved as follows:</p>
+<div class="math notranslate nohighlight" id="equation-opt-hinf-v2">
+<span class="eqno">(7)<a class="headerlink" href="#equation-opt-hinf-v2" title="Permalink to this equation">¶</a></span>\[\begin{split}\begin{aligned}
+    &amp; \underset{ \rho_v, \gamma, \Gamma}{\text{minimize}} &amp; &amp;  \gamma=\int_{-\pi / {T_v}}^{\pi / {T_v}} \Gamma(\omega) d\omega  \\
+    &amp; \text{subject to:}
+    &amp; &amp;
+    \begin{bmatrix}
+    \psi_v^{\star}(\rho_v)\psi_{v,0} + \psi_{v,0}^{\star}\psi_v(\rho_v) - \psi_{v,0}^{\star}\psi_{v,0} &amp; \phantom{xx} Z^{\star}(\rho_v) \\
+    Z(\rho_v) &amp; \phantom{xx} \Gamma (\omega)
+    \end{bmatrix} \succ 0  \\
+    &amp; &amp; &amp;
+    \begin{bmatrix}
+    \psi_v^{\star}(\rho_v)\psi_{v,0} + \psi_{v,0}^{\star}\psi_v(\rho_v) - \psi_{v,0}^{\star}\psi_{v,0} &amp; \phantom{xx} \Delta M_v^{\star} \\
+    \Delta M_v &amp; \phantom{xx} 1
+    \end{bmatrix} \succ 0 \\
+    &amp; &amp; &amp; \forall \omega \in \Omega
+    \end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\psi_{v,0} = \psi_v(\rho_{v,0})\)</span> and</p>
+<div class="math notranslate nohighlight">
+\[Z(\rho_v)=W_{v_2}(\mathcal{S}_{v_dv_0}(\rho_d^*)(k_{ff}+C(\rho_v)) - \psi_v(\rho_v)\mathcal{S}_{v_rv_0}^2).\]</div>
+<p>To set the initial stabilizing controller <span class="math notranslate nohighlight">\(\rho_{v,0}\)</span>, the same
+iterative procedure discussed in the previous section is used. Once a feasible solution
+is found (for some given <span class="math notranslate nohighlight">\(a\)</span>), that solution is used as
+<span class="math notranslate nohighlight">\(\psi_{v,0}\)</span>, and the problem in <a class="reference internal" href="#equation-opt-hinf-v2">(7)</a> can then be efficiently
+solved my PyFresco.</p>
+</div>
+<div class="section" id="performance-evaluation-voltage-control">
+<span id="performance-evaluation-1"></span><h3>Performance Evaluation (Voltage Control)<a class="headerlink" href="#performance-evaluation-voltage-control" title="Permalink to this headline">¶</a></h3>
+<p>Once PyFresco completes the design for both the damping and voltage loops
+(for either <span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> or <span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span>
+performance), the question now remains, how can the performance of the
+controller be evaluated? The optimal solution for each optimization
+method can be used for this purpose; these optimal solutions are
+computed as follows:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{H}_\infty\)</span> control:</p>
+<div class="math notranslate nohighlight">
+\[\begin{aligned}
+        \gamma_\infty^*  &amp;=  \sup_{\omega \in \Omega} |X_\infty (e^{-j\omega T_s})|
+    \end{aligned}\]</div>
+</li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{H}_2\)</span> control:</p>
+<div class="math notranslate nohighlight">
+\[\begin{aligned}
+        \gamma_2^*  &amp;= \sqrt{\frac{T_s}{2\pi} \int_{- \pi/T_s}^{\pi/T_s} \left|X_2(e^{-j\omega T_s}) \right|^2 \: d\omega}
+    \end{aligned}\]</div>
+</li>
+</ul>
+<p>where</p>
+<blockquote>
+<div><div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+  \text{Damping Loop: }&amp;X_\infty = W_d(1 - \mathcal{S}_{v_dv_0}(\rho_d^*)) \\
+                       &amp;X_2 = W_{d_2}(\mathcal{S}_{v_dv_0}(\rho_d^*) - \mathcal{S}_{v_dv_0}^d) \\
+  \text{Voltage Loop: }&amp;X_\infty = W_v(1 - \mathcal{S}_{v_rv_0}(\rho_v^*)) \\
+                       &amp;X_2 = W_{v_2}(\mathcal{S}_{v_rv_0}(\rho_v^*) - \mathcal{S}_{v_rv_0}^d).
+  \end{aligned}\end{split}\]</div>
+</div></blockquote>
+<p>PyFresco displays these optimal solutions at the end of each optimization
+session. Note that the displayed optimal solution is an approximation to
+the true solution (since the frequency vector <span class="math notranslate nohighlight">\(\omega\)</span> is discrete
+and finite). See <a class="reference internal" href="current_field.html#rst-perf-eval"><span class="std std-ref">Performance Evaluation</span></a> for evaluating the controller
+performance for each optimization method and for general details on using
+each of the optimization methods.</p>
+<p>[lastpage]</p>
+<dl class="footnote brackets">
+<dt class="label" id="id4"><span class="brackets"><a class="fn-backref" href="#id2">1</a></span></dt>
+<dd><p>Note that for the initial stabilizing controller, optimizing in the
+continuous-time domain is sufficient to guarantee the stability using
+the discrete-time controller</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="prbs.html" class="btn btn-neutral float-right" title="PRBS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="current_field.html" class="btn btn-neutral float-left" title="Current/Field Control" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Achille Nicoletti
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
